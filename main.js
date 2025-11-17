@@ -721,9 +721,21 @@ if (googleForm && statusEl) {
 
     try {
       const formData = new FormData(googleForm);
+      const jsonData = {
+        date: formData.get("date"),
+        time: formData.get("time"),
+        email: formData.get("email"),
+        instagram: formData.get("instagram"),
+        service: formData.get("service"),
+        details: formData.get("details")
+      };
+
       const response = await fetch(GOOGLE_WEBAPP_URL, {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(jsonData)
       });
 
       if (!response.ok) {
