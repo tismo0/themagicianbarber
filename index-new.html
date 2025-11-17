@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The Magician – Salon de coiffure premium à Verviers. Réservez votre rituel capillaire." />
+  <meta name="theme-color" content="#d4af37" />
+  <title>The Magician – Salon de coiffure premium</title>
+  <link rel="stylesheet" href="style-new.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-brand">
+        <span class="brand-logo">TM</span>
+        <div class="brand-info">
+          <h1>The Magician</h1>
+          <p>Salon de coiffure premium</p>
+        </div>
+      </div>
+      <ul class="navbar-menu">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#team">Équipe</a></li>
+        <li><a href="#booking">Réserver</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><button class="btn-admin" id="btn-admin">Admin</button></li>
+      </ul>
+      <button class="navbar-toggle" id="navbar-toggle">☰</button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h2 class="hero-title">Révélez la magie de votre style</h2>
+      <p class="hero-subtitle">À deux pas du centre de Verviers, The Magician transforme chaque rendez-vous en rituel sur-mesure.</p>
+      <a href="#booking" class="btn-primary">Réserver maintenant</a>
+    </div>
+    <div class="hero-image">
+      <img src="https://images.unsplash.com/photo-1585747860715-cd4628902d4a?auto=format&fit=crop&w=600&q=80" alt="Salon de coiffure" />
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="services">
+    <div class="container">
+      <h2 class="section-title">Nos Services</h2>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">✂️</div>
+          <h3>Coupes</h3>
+          <p>Coupes tondeuse, dégradé, enfant et shampoing</p>
+          <span class="price">À partir de 13€</span>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🧔</div>
+          <h3>Barbe</h3>
+          <p>Tondeuse, entretien, longue et rasage à l'ancienne</p>
+          <span class="price">À partir de 5€</span>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">💆</div>
+          <h3>Soins</h3>
+          <p>Soin visage signature et rituels premium</p>
+          <span class="price">À partir de 40€</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Section -->
+  <section id="team" class="team">
+    <div class="container">
+      <h2 class="section-title">Notre Équipe</h2>
+      <div class="team-grid">
+        <div class="team-card">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80" alt="Élodie" />
+          <h3>Élodie</h3>
+          <p class="role">Color Enchanteresse</p>
+          <p class="specialty">Experte en balayage soleil et corrections de couleurs</p>
+        </div>
+        <div class="team-card">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80" alt="Malik" />
+          <h3>Malik</h3>
+          <p class="role">Tailleur d'ombres</p>
+          <p class="specialty">Spécialiste des coupes graphiques et barbes sculptées</p>
+        </div>
+        <div class="team-card">
+          <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=300&q=80" alt="Lucia" />
+          <h3>Lucia</h3>
+          <p class="role">Architecte du volume</p>
+          <p class="specialty">Maîtrise les coupes transformation et brushings</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Booking Section -->
+  <section id="booking" class="booking">
+    <div class="container">
+      <h2 class="section-title">Réserver un rendez-vous</h2>
+      <div class="booking-wrapper">
+        <!-- Calendar -->
+        <div class="booking-calendar">
+          <div class="calendar-header">
+            <button class="btn-nav" id="prev-month">←</button>
+            <h3 id="calendar-title">Novembre 2025</h3>
+            <button class="btn-nav" id="next-month">→</button>
+          </div>
+          <div class="calendar-weekdays">
+            <div>Lun</div>
+            <div>Mar</div>
+            <div>Mer</div>
+            <div>Jeu</div>
+            <div>Ven</div>
+            <div>Sam</div>
+            <div>Dim</div>
+          </div>
+          <div class="calendar-grid" id="calendar-grid"></div>
+        </div>
+
+        <!-- Booking Form -->
+        <div class="booking-form-wrapper">
+          <form id="booking-form" class="booking-form">
+            <div class="form-group">
+              <label for="service">Service *</label>
+              <select id="service" name="service" required>
+                <option value="">Sélectionnez un service</option>
+                <option value="coupe-tondeuse">Coupe tondeuse (13€)</option>
+                <option value="coupe-degrade">Coupe dégradé (18€)</option>
+                <option value="coupe-enfant">Coupe enfant (15€)</option>
+                <option value="barbe-tondeuse">Barbe tondeuse (5€)</option>
+                <option value="barbe-entretien">Barbe entretien (12€)</option>
+                <option value="rasage-ancien">Rasage à l'ancienne (15€)</option>
+                <option value="soin-visage">Soin visage signature (40€)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="coiffeur">Coiffeur *</label>
+              <select id="coiffeur" name="coiffeur" required>
+                <option value="">Sélectionnez un coiffeur</option>
+                <option value="elodie">Élodie</option>
+                <option value="malik">Malik</option>
+                <option value="lucia">Lucia</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="date">Date *</label>
+              <input type="date" id="date" name="date" required />
+            </div>
+
+            <div class="form-group">
+              <label for="time">Horaire *</label>
+              <select id="time" name="time" required>
+                <option value="">Sélectionnez un horaire</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="nom">Nom *</label>
+              <input type="text" id="nom" name="nom" required />
+            </div>
+
+            <div class="form-group">
+              <label for="prenom">Prénom *</label>
+              <input type="text" id="prenom" name="prenom" required />
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email *</label>
+              <input type="email" id="email" name="email" required />
+            </div>
+
+            <div class="form-group">
+              <label for="instagram">Instagram</label>
+              <input type="text" id="instagram" name="instagram" placeholder="@votre_compte" />
+            </div>
+
+            <div class="form-group">
+              <label for="notes">Notes</label>
+              <textarea id="notes" name="notes" rows="3" placeholder="Informations supplémentaires..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary btn-submit">Confirmer la réservation</button>
+            <div id="form-message" class="form-message"></div>
+          </form>
+
+          <!-- Booking Info -->
+          <div class="booking-info">
+            <h3>Informations</h3>
+            <p><strong>Adresse:</strong> Rue du Palais 93, 4800 Verviers</p>
+            <p><strong>Téléphone:</strong> +32 87 44 77 53</p>
+            <p><strong>Email:</strong> hello@themagician.be</p>
+            <p><strong>Instagram:</strong> @the_magician_barber</p>
+            <div class="hours">
+              <h4>Horaires:</h4>
+              <p>Lun-Mer: 09:00 - 18:00</p>
+              <p>Jeu: 09:00 - 18:30</p>
+              <p>Ven: 09:00 - 19:00</p>
+              <p>Sam: 09:00 - 18:00</p>
+              <p>Dim: Fermé</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="contact">
+    <div class="container">
+      <h2 class="section-title">Nous Contacter</h2>
+      <div class="contact-grid">
+        <div class="contact-item">
+          <div class="contact-icon">📍</div>
+          <h3>Adresse</h3>
+          <p>Rue du Palais 93<br>4800 Verviers</p>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">📞</div>
+          <h3>Téléphone</h3>
+          <p><a href="tel:+3287447753">+32 87 44 77 53</a></p>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">✉️</div>
+          <h3>Email</h3>
+          <p><a href="mailto:hello@themagician.be">hello@themagician.be</a></p>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">📱</div>
+          <h3>Instagram</h3>
+          <p><a href="https://instagram.com/the_magician_barber" target="_blank">@the_magician_barber</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 The Magician. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <!-- Admin Modal -->
+  <div id="admin-modal" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close">✕</button>
+      <h2>Connexion Admin</h2>
+      <input type="password" id="admin-password" placeholder="Code administrateur" />
+      <button id="admin-login" class="btn-primary">Se connecter</button>
+      <div id="admin-message" class="form-message"></div>
+    </div>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="admin-panel" class="admin-panel hidden">
+    <div class="admin-header">
+      <h2>Tableau de bord Admin</h2>
+      <button id="admin-logout" class="btn-secondary">Déconnexion</button>
+    </div>
+    <div class="admin-content">
+      <div class="admin-tabs">
+        <button class="tab-btn active" data-tab="reservations">Réservations</button>
+        <button class="tab-btn" data-tab="blocked">Créneaux bloqués</button>
+        <button class="tab-btn" data-tab="announcements">Annonces</button>
+      </div>
+
+      <!-- Reservations Tab -->
+      <div id="reservations-tab" class="tab-content active">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Heure</th>
+              <th>Client</th>
+              <th>Email</th>
+              <th>Service</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="reservations-list"></tbody>
+        </table>
+      </div>
+
+      <!-- Blocked Slots Tab -->
+      <div id="blocked-tab" class="tab-content">
+        <h3>Bloquer des créneaux</h3>
+        <div class="form-group">
+          <label for="block-date">Date</label>
+          <input type="date" id="block-date" />
+        </div>
+        <div class="form-group">
+          <label for="block-reason">Raison</label>
+          <input type="text" id="block-reason" placeholder="Ex: Fermeture, Vacances, Travaux..." />
+        </div>
+        <button id="block-submit" class="btn-primary">Bloquer</button>
+        <div id="blocked-list"></div>
+      </div>
+
+      <!-- Announcements Tab -->
+      <div id="announcements-tab" class="tab-content">
+        <h3>Ajouter une annonce</h3>
+        <div class="form-group">
+          <label for="announcement-text">Message</label>
+          <textarea id="announcement-text" rows="4" placeholder="Votre annonce..."></textarea>
+        </div>
+        <button id="announcement-submit" class="btn-primary">Publier</button>
+        <div id="announcements-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="main-new.js"></script>
+</body>
+</html>
