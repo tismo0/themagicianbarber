@@ -74,6 +74,7 @@ const CONFIG = {
   googleAppsScript: {
     webAppUrl: "https://script.google.com/macros/s/AKfycbwhj5AWnpznNEJ17ZzX50NMNa5tesBkjDZGlYE_oFC44j3k6QJkKuLWPODXT5RriiT_pA/exec",
     enabled: true, // Mettre à true une fois configuré
+    spreadsheetId: "1tkb4OngFDh70kal8MMlXpU7Pzi06elvXKMO5EH90V9w", // ID de la feuille Google Sheets
   },
 
   // Intégrations (optionnel)

@@ -586,16 +586,41 @@ async function fetchBookingsAndRefresh({ silent = false } = {}) {
   }
 
   try {
-    // Note: Google Apps Script CORS restrictions prevent GET requests from browser
-    // Bookings are stored in Google Sheets and can be viewed directly there
-    // This is a limitation of Google Apps Script's CORS policy
-    console.log("Réservations stockées dans Google Sheets");
+    // Charge les réservations depuis Google Sheets via l'API CSV
+    const spreadsheetId = (typeof CONFIG !== "undefined" && CONFIG.googleAppsScript?.spreadsheetId)
+      ? CONFIG.googleAppsScript.spreadsheetId
+      : null;
+
+    if (!spreadsheetId) {
+      console.log("Pas d'ID de feuille configuré");
+      renderCalendar({ preserveSelection: true });
+      return;
+    }
+
+    const csvUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv`;
+    const response = await fetch(csvUrl);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const csv = await response.text();
+    const lines = csv.trim().split("\n");
+    
+    // Parse CSV (skip header)
+    for (let i = 1; i < lines.length; i++) {
+      const [date, time, email, instagram, service, details] = lines[i].split(",").map(v => v.trim());
+      if (date && time) {
+        const key = `${date}-${time}`;
+        bookingsByDate.set(key, { date, time, email, instagram, service, details });
+      }
+    }
+
     renderCalendar({ preserveSelection: true });
   } catch (error) {
     console.error("Erreur lors du chargement des réservations", error);
-    if (!silent) {
-      setStatus("Impossible de charger les réservations existantes.", "is-error");
-    }
+    // Continue sans erreur - les réservations peuvent être vues dans Google Sheets
+    renderCalendar({ preserveSelection: true });
   }
 }
 
