@@ -607,12 +607,36 @@ async function fetchBookingsAndRefresh({ silent = false } = {}) {
     const csv = await response.text();
     const lines = csv.trim().split("\n");
     
+    console.log("CSV chargé:", lines.length, "lignes");
+    
     // Parse CSV (skip header)
     for (let i = 1; i < lines.length; i++) {
-      const [date, time, email, instagram, service, details] = lines[i].split(",").map(v => v.trim());
+      const line = lines[i];
+      if (!line.trim()) continue;
+      
+      // Parse CSV en gérant les guillemets
+      const values = [];
+      let current = "";
+      let inQuotes = false;
+      
+      for (let j = 0; j < line.length; j++) {
+        const char = line[j];
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === "," && !inQuotes) {
+          values.push(current.trim().replace(/^"|"$/g, ""));
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+      values.push(current.trim().replace(/^"|"$/g, ""));
+      
+      const [date, time, email, instagram, service, details] = values;
       if (date && time) {
         const key = `${date}-${time}`;
         bookingsByDate.set(key, { date, time, email, instagram, service, details });
+        console.log("Réservation chargée:", key);
       }
     }
 
