@@ -1,9 +1,7 @@
-// ===== Configuration =====
 const ADMIN_PASSWORD = "@admin48k";
 const STORAGE_KEY = "magician_bookings";
 const ADMIN_KEY = "magician_admin";
 
-// ===== State =====
 let bookings = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 let blockedDates = JSON.parse(localStorage.getItem("magician_blocked")) || [];
 let announcements = JSON.parse(localStorage.getItem("magician_announcements")) || [];
@@ -11,7 +9,6 @@ let isAdminLoggedIn = false;
 let selectedDate = null;
 let currentMonth = new Date();
 
-// ===== Services & Team =====
 const services = {
   "coupe-tondeuse": { name: "Coupe tondeuse", price: 13, duration: 20 },
   "coupe-degrade": { name: "Coupe dégradé", price: 18, duration: 30 },
@@ -19,10 +16,12 @@ const services = {
   "barbe-tondeuse": { name: "Barbe tondeuse", price: 5, duration: 10 },
   "barbe-entretien": { name: "Barbe entretien", price: 12, duration: 20 },
   "rasage-ancien": { name: "Rasage à l'ancienne", price: 15, duration: 30 },
-  "soin-visage": { name: "Soin visage signature", price: 40, duration: 45 }
+  "soin-visage": { name: "Soin visage signature", price: 40, duration: 45 },
+  "massage-cranien": { name: "Massage crânien", price: 25, duration: 30 },
+  "traitement-barbe": { name: "Traitement barbe", price: 20, duration: 25 }
 };
 
-const team = ["elodie", "malik", "lucia"];
+const team = ["malik", "elodie", "lucia"];
 const businessHours = {
   1: { start: "09:00", end: "18:00" },
   2: { start: "09:00", end: "18:00" },
@@ -32,59 +31,33 @@ const businessHours = {
   6: { start: "09:00", end: "18:00" }
 };
 
-// ===== DOM Elements =====
-const calendarGrid = document.getElementById("calendar-grid");
-const calendarTitle = document.getElementById("calendar-title");
-const prevMonthBtn = document.getElementById("prev-month");
-const nextMonthBtn = document.getElementById("next-month");
-const bookingForm = document.getElementById("booking-form");
-const dateInput = document.getElementById("date");
-const timeInput = document.getElementById("time");
-const formMessage = document.getElementById("form-message");
-const adminBtn = document.getElementById("btn-admin");
-const adminModal = document.getElementById("admin-modal");
-const adminPanel = document.getElementById("admin-panel");
-const adminPassword = document.getElementById("admin-password");
-const adminLogin = document.getElementById("admin-login");
-const adminLogout = document.getElementById("admin-logout");
-const modalClose = document.getElementById("modal-close");
-const navbarToggle = document.getElementById("navbar-toggle");
-const navbarMenu = document.querySelector(".navbar-menu");
-
-// ===== Initialize =====
 document.addEventListener("DOMContentLoaded", () => {
   renderCalendar();
   setupEventListeners();
   checkAdminStatus();
+  displayAnnouncements();
 });
 
-// ===== Calendar Functions =====
 function renderCalendar() {
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
+  const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+  document.getElementById("calendar-title").textContent = `${monthNames[month]} ${year}`;
 
-  // Update title
-  const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
-    "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
-  calendarTitle.textContent = `${monthNames[month]} ${year}`;
-
-  // Clear grid
+  const calendarGrid = document.getElementById("calendar-grid");
   calendarGrid.innerHTML = "";
 
-  // Get first day and number of days
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // Add empty cells for days before month starts
   for (let i = 0; i < (firstDay === 0 ? 6 : firstDay - 1); i++) {
     const emptyDay = document.createElement("div");
     emptyDay.className = "calendar-day disabled";
     calendarGrid.appendChild(emptyDay);
   }
 
-  // Add days of month
   for (let day = 1; day <= daysInMonth; day++) {
     const date = new Date(year, month, day);
     const dateStr = formatDate(date);
@@ -92,17 +65,14 @@ function renderCalendar() {
     dayElement.className = "calendar-day";
     dayElement.textContent = day;
 
-    // Check if date is in the past
     if (date < today) {
       dayElement.classList.add("disabled");
     } else if (isDateBlocked(dateStr)) {
-      dayElement.classList.add("disabled");
+      dayElement.classList.add("closed");
     } else {
-      // Check if has bookings
       if (hasBookingsOnDate(dateStr)) {
         dayElement.classList.add("has-booking");
       }
-
       dayElement.addEventListener("click", () => selectDate(dateStr, dayElement));
     }
 
@@ -111,25 +81,20 @@ function renderCalendar() {
 }
 
 function selectDate(dateStr, element) {
-  // Remove previous selection
   document.querySelectorAll(".calendar-day.selected").forEach(el => {
     el.classList.remove("selected");
   });
-
-  // Add selection
   element.classList.add("selected");
   selectedDate = dateStr;
-  dateInput.value = dateStr;
-
-  // Update available times
+  document.getElementById("date").value = dateStr;
   updateAvailableTimes(dateStr);
 }
 
 function updateAvailableTimes(dateStr) {
   const date = new Date(dateStr);
   const dayOfWeek = date.getDay();
+  const timeInput = document.getElementById("time");
 
-  // Check if salon is open
   if (!businessHours[dayOfWeek]) {
     timeInput.innerHTML = '<option value="">Fermé ce jour</option>';
     return;
@@ -140,17 +105,14 @@ function updateAvailableTimes(dateStr) {
   const bookedTimes = getBookedTimesForDate(dateStr);
 
   timeInput.innerHTML = '<option value="">Sélectionnez un horaire</option>';
-
   times.forEach(time => {
     const option = document.createElement("option");
     option.value = time;
     option.textContent = time;
-
     if (bookedTimes.includes(time)) {
       option.disabled = true;
       option.textContent += " (Occupé)";
     }
-
     timeInput.appendChild(option);
   });
 }
@@ -162,7 +124,6 @@ function generateTimeSlots(start, end) {
 
   let current = new Date();
   current.setHours(startH, startM, 0);
-
   const endTime = new Date();
   endTime.setHours(endH, endM, 0);
 
@@ -172,7 +133,6 @@ function generateTimeSlots(start, end) {
     slots.push(`${hours}:${minutes}`);
     current.setMinutes(current.getMinutes() + 30);
   }
-
   return slots;
 }
 
@@ -181,9 +141,7 @@ function hasBookingsOnDate(dateStr) {
 }
 
 function getBookedTimesForDate(dateStr) {
-  return bookings
-    .filter(b => b.date === dateStr)
-    .map(b => b.time);
+  return bookings.filter(b => b.date === dateStr).map(b => b.time);
 }
 
 function isDateBlocked(dateStr) {
@@ -197,28 +155,40 @@ function formatDate(date) {
   return `${year}-${month}-${day}`;
 }
 
-// ===== Booking Functions =====
 function setupEventListeners() {
-  prevMonthBtn.addEventListener("click", () => {
+  document.getElementById("prev-month").addEventListener("click", () => {
     currentMonth.setMonth(currentMonth.getMonth() - 1);
     renderCalendar();
   });
 
-  nextMonthBtn.addEventListener("click", () => {
+  document.getElementById("next-month").addEventListener("click", () => {
     currentMonth.setMonth(currentMonth.getMonth() + 1);
     renderCalendar();
   });
 
-  bookingForm.addEventListener("submit", handleBookingSubmit);
-  adminBtn.addEventListener("click", openAdminModal);
-  adminLogin.addEventListener("click", handleAdminLogin);
-  adminLogout.addEventListener("click", handleAdminLogout);
-  modalClose.addEventListener("click", closeAdminModal);
-  navbarToggle.addEventListener("click", toggleNavbarMenu);
+  document.getElementById("booking-form").addEventListener("submit", handleBookingSubmit);
+  document.getElementById("btn-admin").addEventListener("click", openAdminModal);
+  document.getElementById("admin-login").addEventListener("click", handleAdminLogin);
+  document.getElementById("admin-logout").addEventListener("click", handleAdminLogout);
+  document.getElementById("admin-close").addEventListener("click", closeAdminPanel);
+  document.getElementById("modal-close").addEventListener("click", closeAdminModal);
+  document.getElementById("navbar-toggle").addEventListener("click", toggleNavbarMenu);
+  document.getElementById("search-bookings").addEventListener("click", searchBookings);
 
-  // Close modal on outside click
-  adminModal.addEventListener("click", (e) => {
-    if (e.target === adminModal) closeAdminModal();
+  document.querySelectorAll(".admin-nav-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      document.querySelectorAll(".admin-nav-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".admin-tab").forEach(t => t.classList.remove("active"));
+      e.target.classList.add("active");
+      const tabId = e.target.dataset.tab + "-tab";
+      document.getElementById(tabId).classList.add("active");
+    });
+  });
+
+  document.getElementById("block-submit").addEventListener("click", blockDate);
+  document.getElementById("announcement-submit").addEventListener("click", addAnnouncement);
+  document.getElementById("admin-modal").addEventListener("click", (e) => {
+    if (e.target.id === "admin-modal") closeAdminModal();
   });
 }
 
@@ -231,77 +201,59 @@ async function handleBookingSubmit(e) {
     time: document.getElementById("time").value,
     service: document.getElementById("service").value,
     coiffeur: document.getElementById("coiffeur").value,
-    nom: document.getElementById("nom").value,
     prenom: document.getElementById("prenom").value,
+    nom: document.getElementById("nom").value,
     email: document.getElementById("email").value,
     instagram: document.getElementById("instagram").value,
     notes: document.getElementById("notes").value,
     createdAt: new Date().toISOString()
   };
 
-  // Validation
-  if (!formData.date || !formData.time || !formData.service) {
+  if (!formData.date || !formData.time || !formData.service || !formData.email) {
     showMessage("Veuillez remplir tous les champs obligatoires", "error");
     return;
   }
 
-  // Check if time slot is available
   if (getBookedTimesForDate(formData.date).includes(formData.time)) {
     showMessage("Cet horaire n'est plus disponible", "error");
     return;
   }
 
-  // Save booking
   bookings.push(formData);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
 
-  // Show success message
   showMessage("✓ Réservation confirmée ! Nous vous revenons sous 24h.", "success");
-
-  // Reset form
-  bookingForm.reset();
+  document.getElementById("booking-form").reset();
   selectedDate = null;
   renderCalendar();
-
-  // Send confirmation email (optional)
-  sendConfirmationEmail(formData);
-}
-
-function sendConfirmationEmail(booking) {
-  // In a real app, this would send to a backend
-  console.log("Confirmation email would be sent to:", booking.email);
 }
 
 function showMessage(message, type) {
+  const formMessage = document.getElementById("form-message");
   formMessage.textContent = message;
   formMessage.className = `form-message ${type}`;
-  formMessage.style.display = "block";
-
   setTimeout(() => {
-    formMessage.style.display = "none";
+    formMessage.className = "form-message";
   }, 5000);
 }
 
-// ===== Admin Functions =====
 function openAdminModal() {
-  adminModal.classList.add("active");
-  adminPassword.focus();
+  document.getElementById("admin-modal").classList.add("active");
+  document.getElementById("admin-password").focus();
 }
 
 function closeAdminModal() {
-  adminModal.classList.remove("active");
-  adminPassword.value = "";
+  document.getElementById("admin-modal").classList.remove("active");
+  document.getElementById("admin-password").value = "";
 }
 
 function handleAdminLogin() {
-  const password = adminPassword.value;
-
+  const password = document.getElementById("admin-password").value;
   if (password === ADMIN_PASSWORD) {
     isAdminLoggedIn = true;
     localStorage.setItem(ADMIN_KEY, "true");
     closeAdminModal();
-    showAdminPanel();
-    renderAdminPanel();
+    openAdminPanel();
   } else {
     document.getElementById("admin-message").textContent = "Code incorrect";
     document.getElementById("admin-message").className = "form-message error";
@@ -311,8 +263,7 @@ function handleAdminLogin() {
 function handleAdminLogout() {
   isAdminLoggedIn = false;
   localStorage.removeItem(ADMIN_KEY);
-  adminPanel.classList.remove("active");
-  adminPanel.classList.add("hidden");
+  closeAdminPanel();
 }
 
 function checkAdminStatus() {
@@ -321,13 +272,16 @@ function checkAdminStatus() {
   }
 }
 
-function showAdminPanel() {
-  adminPanel.classList.remove("hidden");
-  adminPanel.classList.add("active");
+function openAdminPanel() {
+  document.getElementById("admin-panel").classList.add("active");
+  renderAdminPanel();
+}
+
+function closeAdminPanel() {
+  document.getElementById("admin-panel").classList.remove("active");
 }
 
 function renderAdminPanel() {
-  // Render reservations
   const reservationsList = document.getElementById("reservations-list");
   reservationsList.innerHTML = "";
 
@@ -346,51 +300,53 @@ function renderAdminPanel() {
     reservationsList.appendChild(row);
   });
 
-  // Setup tab switching
-  document.querySelectorAll(".tab-btn").forEach(btn => {
-    btn.addEventListener("click", (e) => {
-      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-      document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
-
-      e.target.classList.add("active");
-      const tabId = e.target.dataset.tab + "-tab";
-      document.getElementById(tabId).classList.add("active");
-    });
-  });
-
-  // Setup blocked dates
-  const blockSubmit = document.getElementById("block-submit");
-  blockSubmit.addEventListener("click", () => {
-    const date = document.getElementById("block-date").value;
-    const reason = document.getElementById("block-reason").value;
-
-    if (date && reason) {
-      blockedDates.push({ date, reason });
-      localStorage.setItem("magician_blocked", JSON.stringify(blockedDates));
-      renderBlockedDates();
-      renderCalendar();
-    }
-  });
-
-  // Setup announcements
-  const announcementSubmit = document.getElementById("announcement-submit");
-  announcementSubmit.addEventListener("click", () => {
-    const text = document.getElementById("announcement-text").value;
-
-    if (text) {
-      announcements.push({
-        id: Date.now().toString(),
-        text,
-        createdAt: new Date().toISOString()
-      });
-      localStorage.setItem("magician_announcements", JSON.stringify(announcements));
-      document.getElementById("announcement-text").value = "";
-      renderAnnouncements();
-    }
-  });
-
   renderBlockedDates();
   renderAnnouncements();
+  updateDashboard();
+}
+
+function updateDashboard() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const weekEnd = new Date(today);
+  weekEnd.setDate(weekEnd.getDate() + 7);
+
+  const todayBookings = bookings.filter(b => b.date === formatDate(today));
+  const weekBookings = bookings.filter(b => {
+    const bDate = new Date(b.date);
+    return bDate >= today && bDate <= weekEnd;
+  });
+
+  document.getElementById("stat-bookings").textContent = bookings.length;
+  document.getElementById("stat-today").textContent = todayBookings.length;
+  document.getElementById("stat-week").textContent = weekBookings.length;
+
+  const upcomingBookings = document.getElementById("upcoming-bookings");
+  upcomingBookings.innerHTML = "<h3>Prochaines réservations</h3>";
+  bookings.slice(0, 5).forEach(booking => {
+    const div = document.createElement("div");
+    div.className = "upcoming-booking";
+    div.innerHTML = `
+      <p><strong>${booking.date} à ${booking.time}</strong></p>
+      <p>${booking.prenom} ${booking.nom} - ${services[booking.service]?.name}</p>
+      <p>${booking.email}</p>
+    `;
+    upcomingBookings.appendChild(div);
+  });
+}
+
+function blockDate() {
+  const date = document.getElementById("block-date").value;
+  const reason = document.getElementById("block-reason").value;
+
+  if (date && reason) {
+    blockedDates.push({ date, reason });
+    localStorage.setItem("magician_blocked", JSON.stringify(blockedDates));
+    document.getElementById("block-date").value = "";
+    document.getElementById("block-reason").value = "";
+    renderBlockedDates();
+    renderCalendar();
+  }
 }
 
 function renderBlockedDates() {
@@ -399,35 +355,15 @@ function renderBlockedDates() {
 
   blockedDates.forEach((blocked, index) => {
     const div = document.createElement("div");
-    div.style.cssText = "padding: 1rem; background: #f0f0f0; border-radius: 8px; margin-top: 1rem;";
+    div.className = "blocked-item";
     div.innerHTML = `
-      <p><strong>${blocked.date}</strong> - ${blocked.reason}</p>
+      <div>
+        <p><strong>${blocked.date}</strong> - ${blocked.reason}</p>
+      </div>
       <button class="btn-secondary" onclick="removeBlockedDate(${index})">Débloquer</button>
     `;
     blockedList.appendChild(div);
   });
-}
-
-function renderAnnouncements() {
-  const announcementsList = document.getElementById("announcements-list");
-  announcementsList.innerHTML = "";
-
-  announcements.forEach((ann, index) => {
-    const div = document.createElement("div");
-    div.style.cssText = "padding: 1rem; background: #f0f0f0; border-radius: 8px; margin-top: 1rem;";
-    div.innerHTML = `
-      <p>${ann.text}</p>
-      <button class="btn-secondary" onclick="removeAnnouncement(${index})">Supprimer</button>
-    `;
-    announcementsList.appendChild(div);
-  });
-}
-
-function deleteBooking(id) {
-  bookings = bookings.filter(b => b.id !== id);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
-  renderAdminPanel();
-  renderCalendar();
 }
 
 function removeBlockedDate(index) {
@@ -437,20 +373,124 @@ function removeBlockedDate(index) {
   renderCalendar();
 }
 
+function addAnnouncement() {
+  const text = document.getElementById("announcement-text").value;
+  const type = document.getElementById("announcement-type").value;
+
+  if (text) {
+    announcements.push({
+      id: Date.now().toString(),
+      text,
+      type,
+      createdAt: new Date().toISOString()
+    });
+    localStorage.setItem("magician_announcements", JSON.stringify(announcements));
+    document.getElementById("announcement-text").value = "";
+    renderAnnouncements();
+    displayAnnouncements();
+  }
+}
+
+function renderAnnouncements() {
+  const announcementsList = document.getElementById("announcements-list");
+  announcementsList.innerHTML = "";
+
+  announcements.forEach((ann, index) => {
+    const div = document.createElement("div");
+    div.className = "announcement-item";
+    div.innerHTML = `
+      <div>
+        <p><strong>${ann.type.toUpperCase()}</strong></p>
+        <p>${ann.text}</p>
+      </div>
+      <button class="btn-secondary" onclick="removeAnnouncement(${index})">Supprimer</button>
+    `;
+    announcementsList.appendChild(div);
+  });
+}
+
 function removeAnnouncement(index) {
   announcements.splice(index, 1);
   localStorage.setItem("magician_announcements", JSON.stringify(announcements));
   renderAnnouncements();
+  displayAnnouncements();
 }
 
-// ===== Navbar Toggle =====
+function displayAnnouncements() {
+  const banner = document.getElementById("announcements-banner");
+  banner.innerHTML = "";
+
+  const activeAnnouncements = announcements.filter(a => a.type === "closed" || a.type === "warning");
+  if (activeAnnouncements.length > 0) {
+    banner.classList.add("active");
+    activeAnnouncements.forEach(ann => {
+      const p = document.createElement("p");
+      p.textContent = ann.text;
+      banner.appendChild(p);
+    });
+  }
+}
+
+function deleteBooking(id) {
+  bookings = bookings.filter(b => b.id !== id);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
+  renderAdminPanel();
+  renderCalendar();
+}
+
+function searchBookings() {
+  const email = document.getElementById("search-email").value;
+  const bookingsList = document.getElementById("bookings-list");
+  bookingsList.innerHTML = "";
+
+  if (!email) {
+    bookingsList.innerHTML = "<p style='text-align: center; color: #999;'>Entrez votre email pour voir vos réservations</p>";
+    return;
+  }
+
+  const userBookings = bookings.filter(b => b.email.toLowerCase() === email.toLowerCase());
+
+  if (userBookings.length === 0) {
+    bookingsList.innerHTML = "<p style='text-align: center; color: #999;'>Aucune réservation trouvée</p>";
+    return;
+  }
+
+  userBookings.forEach(booking => {
+    const div = document.createElement("div");
+    div.className = "booking-item";
+    div.innerHTML = `
+      <h4>${booking.date} à ${booking.time}</h4>
+      <p><strong>Service:</strong> ${services[booking.service]?.name}</p>
+      <p><strong>Coiffeur:</strong> ${booking.coiffeur}</p>
+      <p><strong>Nom:</strong> ${booking.prenom} ${booking.nom}</p>
+      <p><strong>Notes:</strong> ${booking.notes || "Aucune"}</p>
+      <div class="booking-actions">
+        <button class="btn-edit" onclick="editBooking('${booking.id}')">Modifier</button>
+        <button class="btn-delete" onclick="cancelBooking('${booking.id}')">Annuler</button>
+      </div>
+    `;
+    bookingsList.appendChild(div);
+  });
+}
+
+function editBooking(id) {
+  alert("Fonctionnalité de modification en cours de développement");
+}
+
+function cancelBooking(id) {
+  if (confirm("Êtes-vous sûr de vouloir annuler cette réservation ?")) {
+    bookings = bookings.filter(b => b.id !== id);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
+    searchBookings();
+  }
+}
+
 function toggleNavbarMenu() {
-  navbarMenu.classList.toggle("active");
+  document.querySelector(".navbar-menu").classList.toggle("active");
 }
 
-// Close menu when clicking on a link
 document.querySelectorAll(".navbar-menu a").forEach(link => {
   link.addEventListener("click", () => {
-    navbarMenu.classList.remove("active");
+    document.querySelector(".navbar-menu").classList.remove("active");
   });
 });

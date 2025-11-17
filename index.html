@@ -4,22 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="The Magician – Salon de coiffure premium à Verviers. Réservez votre rituel capillaire." />
-  <meta name="theme-color" content="#d4af37" />
+  <meta name="theme-color" content="#1a1a1a" />
   <title>The Magician – Salon de coiffure premium</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
   <!-- Navigation -->
   <nav class="navbar">
     <div class="navbar-container">
       <div class="navbar-brand">
-        <span class="brand-logo">TM</span>
+        <div class="brand-logo">✂️</div>
         <div class="brand-info">
           <h1>The Magician</h1>
-          <p>Salon de coiffure premium</p>
+          <p>Salon Premium</p>
         </div>
       </div>
       <ul class="navbar-menu">
@@ -33,15 +33,16 @@
     </div>
   </nav>
 
+  <!-- Announcements Banner -->
+  <div id="announcements-banner" class="announcements-banner"></div>
+
   <!-- Hero Section -->
   <section class="hero">
+    <div class="hero-overlay"></div>
     <div class="hero-content">
       <h2 class="hero-title">Révélez la magie de votre style</h2>
-      <p class="hero-subtitle">À deux pas du centre de Verviers, The Magician transforme chaque rendez-vous en rituel sur-mesure.</p>
+      <p class="hero-subtitle">Salon de coiffure premium à Verviers • Coupes • Barbe • Soins</p>
       <a href="#booking" class="btn-primary">Réserver maintenant</a>
-    </div>
-    <div class="hero-image">
-      <img src="https://images.unsplash.com/photo-1585747860715-cd4628902d4a?auto=format&fit=crop&w=600&q=80" alt="Salon de coiffure" />
     </div>
   </section>
 
@@ -51,22 +52,48 @@
       <h2 class="section-title">Nos Services</h2>
       <div class="services-grid">
         <div class="service-card">
-          <div class="service-icon">✂️</div>
-          <h3>Coupes</h3>
-          <p>Coupes tondeuse, dégradé, enfant et shampoing</p>
-          <span class="price">À partir de 13€</span>
+          <div class="service-image">
+            <img src="https://images.unsplash.com/photo-1599351431202-924373718618?auto=format&fit=crop&w=400&q=80" alt="Coupes" />
+          </div>
+          <div class="service-content">
+            <h3>Coupes</h3>
+            <ul>
+              <li>Coupe tondeuse - 13€</li>
+              <li>Coupe dégradé - 18€</li>
+              <li>Coupe enfant - 15€</li>
+              <li>Shampoing inclus</li>
+            </ul>
+          </div>
         </div>
+
         <div class="service-card">
-          <div class="service-icon">🧔</div>
-          <h3>Barbe</h3>
-          <p>Tondeuse, entretien, longue et rasage à l'ancienne</p>
-          <span class="price">À partir de 5€</span>
+          <div class="service-image">
+            <img src="https://images.unsplash.com/photo-1621905167918-48416bd8575a?auto=format&fit=crop&w=400&q=80" alt="Barbe" />
+          </div>
+          <div class="service-content">
+            <h3>Barbe</h3>
+            <ul>
+              <li>Tondeuse - 5€</li>
+              <li>Entretien - 12€</li>
+              <li>Rasage à l'ancienne - 15€</li>
+              <li>Gommage & soin inclus</li>
+            </ul>
+          </div>
         </div>
+
         <div class="service-card">
-          <div class="service-icon">💆</div>
-          <h3>Soins</h3>
-          <p>Soin visage signature et rituels premium</p>
-          <span class="price">À partir de 40€</span>
+          <div class="service-image">
+            <img src="https://images.unsplash.com/photo-1596728147701-392d4127585d?auto=format&fit=crop&w=400&q=80" alt="Soins" />
+          </div>
+          <div class="service-content">
+            <h3>Soins Premium</h3>
+            <ul>
+              <li>Soin visage signature - 40€</li>
+              <li>Massage crânien - 25€</li>
+              <li>Traitement barbe - 20€</li>
+              <li>Rituels sur-mesure</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -75,25 +102,42 @@
   <!-- Team Section -->
   <section id="team" class="team">
     <div class="container">
-      <h2 class="section-title">Notre Équipe</h2>
+      <h2 class="section-title">Notre Équipe d'Experts</h2>
       <div class="team-grid">
         <div class="team-card">
-          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80" alt="Élodie" />
-          <h3>Élodie</h3>
-          <p class="role">Color Enchanteresse</p>
-          <p class="specialty">Experte en balayage soleil et corrections de couleurs</p>
-        </div>
-        <div class="team-card">
-          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80" alt="Malik" />
+          <div class="team-image">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80" alt="Malik" />
+            <div class="team-overlay">
+              <p>Spécialiste coupes & barbe</p>
+            </div>
+          </div>
           <h3>Malik</h3>
           <p class="role">Tailleur d'ombres</p>
-          <p class="specialty">Spécialiste des coupes graphiques et barbes sculptées</p>
+          <p class="specialty">15 ans d'expérience • Coupes graphiques • Barbes sculptées</p>
         </div>
+
         <div class="team-card">
-          <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=300&q=80" alt="Lucia" />
+          <div class="team-image">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80" alt="Élodie" />
+            <div class="team-overlay">
+              <p>Experte couleur & soins</p>
+            </div>
+          </div>
+          <h3>Élodie</h3>
+          <p class="role">Color Enchanteresse</p>
+          <p class="specialty">Balayage • Corrections • Soins capillaires premium</p>
+        </div>
+
+        <div class="team-card">
+          <div class="team-image">
+            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=300&q=80" alt="Lucia" />
+            <div class="team-overlay">
+              <p>Architecte du volume</p>
+            </div>
+          </div>
           <h3>Lucia</h3>
           <p class="role">Architecte du volume</p>
-          <p class="specialty">Maîtrise les coupes transformation et brushings</p>
+          <p class="specialty">Coupes transformation • Brushings • Mise en beauté</p>
         </div>
       </div>
     </div>
@@ -103,6 +147,7 @@
   <section id="booking" class="booking">
     <div class="container">
       <h2 class="section-title">Réserver un rendez-vous</h2>
+      
       <div class="booking-wrapper">
         <!-- Calendar -->
         <div class="booking-calendar">
@@ -121,55 +166,27 @@
             <div>Dim</div>
           </div>
           <div class="calendar-grid" id="calendar-grid"></div>
+          <div class="calendar-legend">
+            <p><span class="legend-available"></span> Disponible</p>
+            <p><span class="legend-booked"></span> Occupé</p>
+            <p><span class="legend-closed"></span> Fermé</p>
+          </div>
         </div>
 
         <!-- Booking Form -->
         <div class="booking-form-wrapper">
           <form id="booking-form" class="booking-form">
-            <div class="form-group">
-              <label for="service">Service *</label>
-              <select id="service" name="service" required>
-                <option value="">Sélectionnez un service</option>
-                <option value="coupe-tondeuse">Coupe tondeuse (13€)</option>
-                <option value="coupe-degrade">Coupe dégradé (18€)</option>
-                <option value="coupe-enfant">Coupe enfant (15€)</option>
-                <option value="barbe-tondeuse">Barbe tondeuse (5€)</option>
-                <option value="barbe-entretien">Barbe entretien (12€)</option>
-                <option value="rasage-ancien">Rasage à l'ancienne (15€)</option>
-                <option value="soin-visage">Soin visage signature (40€)</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="coiffeur">Coiffeur *</label>
-              <select id="coiffeur" name="coiffeur" required>
-                <option value="">Sélectionnez un coiffeur</option>
-                <option value="elodie">Élodie</option>
-                <option value="malik">Malik</option>
-                <option value="lucia">Lucia</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="date">Date *</label>
-              <input type="date" id="date" name="date" required />
-            </div>
-
-            <div class="form-group">
-              <label for="time">Horaire *</label>
-              <select id="time" name="time" required>
-                <option value="">Sélectionnez un horaire</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="nom">Nom *</label>
-              <input type="text" id="nom" name="nom" required />
-            </div>
-
-            <div class="form-group">
-              <label for="prenom">Prénom *</label>
-              <input type="text" id="prenom" name="prenom" required />
+            <h3>Vos informations</h3>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="prenom">Prénom *</label>
+                <input type="text" id="prenom" name="prenom" required />
+              </div>
+              <div class="form-group">
+                <label for="nom">Nom *</label>
+                <input type="text" id="nom" name="nom" required />
+              </div>
             </div>
 
             <div class="form-group">
@@ -178,12 +195,59 @@
             </div>
 
             <div class="form-group">
-              <label for="instagram">Instagram</label>
+              <label for="instagram">Instagram (optionnel)</label>
               <input type="text" id="instagram" name="instagram" placeholder="@votre_compte" />
             </div>
 
+            <h3 style="margin-top: 2rem;">Votre rendez-vous</h3>
+
             <div class="form-group">
-              <label for="notes">Notes</label>
+              <label for="service">Service *</label>
+              <select id="service" name="service" required>
+                <option value="">Sélectionnez un service</option>
+                <optgroup label="Coupes">
+                  <option value="coupe-tondeuse">Coupe tondeuse - 13€</option>
+                  <option value="coupe-degrade">Coupe dégradé - 18€</option>
+                  <option value="coupe-enfant">Coupe enfant - 15€</option>
+                </optgroup>
+                <optgroup label="Barbe">
+                  <option value="barbe-tondeuse">Barbe tondeuse - 5€</option>
+                  <option value="barbe-entretien">Barbe entretien - 12€</option>
+                  <option value="rasage-ancien">Rasage à l'ancienne - 15€</option>
+                </optgroup>
+                <optgroup label="Soins">
+                  <option value="soin-visage">Soin visage signature - 40€</option>
+                  <option value="massage-cranien">Massage crânien - 25€</option>
+                  <option value="traitement-barbe">Traitement barbe - 20€</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="coiffeur">Coiffeur *</label>
+              <select id="coiffeur" name="coiffeur" required>
+                <option value="">Sélectionnez un coiffeur</option>
+                <option value="malik">Malik - Tailleur d'ombres</option>
+                <option value="elodie">Élodie - Color Enchanteresse</option>
+                <option value="lucia">Lucia - Architecte du volume</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="date">Date *</label>
+                <input type="date" id="date" name="date" required />
+              </div>
+              <div class="form-group">
+                <label for="time">Horaire *</label>
+                <select id="time" name="time" required>
+                  <option value="">Sélectionnez un horaire</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="notes">Notes (optionnel)</label>
               <textarea id="notes" name="notes" rows="3" placeholder="Informations supplémentaires..."></textarea>
             </div>
 
@@ -193,22 +257,62 @@
 
           <!-- Booking Info -->
           <div class="booking-info">
-            <h3>Informations</h3>
-            <p><strong>Adresse:</strong> Rue du Palais 93, 4800 Verviers</p>
-            <p><strong>Téléphone:</strong> +32 87 44 77 53</p>
-            <p><strong>Email:</strong> hello@themagician.be</p>
-            <p><strong>Instagram:</strong> @the_magician_barber</p>
+            <h3>Informations du salon</h3>
+            <div class="info-item">
+              <span class="info-icon">📍</span>
+              <div>
+                <strong>Adresse</strong>
+                <p>Rue du Palais 93<br>4800 Verviers</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-icon">📞</span>
+              <div>
+                <strong>Téléphone</strong>
+                <p><a href="tel:+3287447753">+32 87 44 77 53</a></p>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-icon">✉️</span>
+              <div>
+                <strong>Email</strong>
+                <p><a href="mailto:hello@themagician.be">hello@themagician.be</a></p>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-icon">📱</span>
+              <div>
+                <strong>Instagram</strong>
+                <p><a href="https://instagram.com/the_magician_barber" target="_blank">@the_magician_barber</a></p>
+              </div>
+            </div>
+
             <div class="hours">
-              <h4>Horaires:</h4>
-              <p>Lun-Mer: 09:00 - 18:00</p>
-              <p>Jeu: 09:00 - 18:30</p>
-              <p>Ven: 09:00 - 19:00</p>
-              <p>Sam: 09:00 - 18:00</p>
-              <p>Dim: Fermé</p>
+              <h4>Horaires d'ouverture</h4>
+              <p><strong>Lun-Mer:</strong> 09:00 - 18:00</p>
+              <p><strong>Jeu:</strong> 09:00 - 18:30</p>
+              <p><strong>Ven:</strong> 09:00 - 19:00</p>
+              <p><strong>Sam:</strong> 09:00 - 18:00</p>
+              <p><strong>Dim:</strong> Fermé</p>
             </div>
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- My Bookings Section -->
+  <section id="my-bookings" class="my-bookings">
+    <div class="container">
+      <h2 class="section-title">Mes Réservations</h2>
+      <p class="section-subtitle">Consultez, modifiez ou annulez vos réservations</p>
+      
+      <div class="bookings-search">
+        <input type="email" id="search-email" placeholder="Entrez votre email pour voir vos réservations" />
+        <button id="search-bookings" class="btn-primary">Rechercher</button>
+      </div>
+
+      <div id="bookings-list" class="bookings-list"></div>
     </div>
   </section>
 
@@ -244,7 +348,7 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="container">
-      <p>&copy; 2025 The Magician. Tous droits réservés.</p>
+      <p>&copy; 2025 The Magician. Tous droits réservés. | Salon de coiffure premium à Verviers</p>
     </div>
   </footer>
 
@@ -260,20 +364,55 @@
   </div>
 
   <!-- Admin Panel -->
-  <div id="admin-panel" class="admin-panel hidden">
-    <div class="admin-header">
-      <h2>Tableau de bord Admin</h2>
-      <button id="admin-logout" class="btn-secondary">Déconnexion</button>
+  <div id="admin-panel" class="admin-panel">
+    <div class="admin-sidebar">
+      <div class="admin-header">
+        <h2>Admin Panel</h2>
+        <button id="admin-close" class="btn-close">✕</button>
+      </div>
+      <nav class="admin-nav">
+        <button class="admin-nav-btn active" data-tab="dashboard">📊 Tableau de bord</button>
+        <button class="admin-nav-btn" data-tab="reservations">📅 Réservations</button>
+        <button class="admin-nav-btn" data-tab="blocked">🚫 Créneaux bloqués</button>
+        <button class="admin-nav-btn" data-tab="announcements">📢 Annonces</button>
+        <button class="admin-nav-btn" data-tab="settings">⚙️ Paramètres</button>
+        <button id="admin-logout" class="btn-logout">Déconnexion</button>
+      </nav>
     </div>
+
     <div class="admin-content">
-      <div class="admin-tabs">
-        <button class="tab-btn active" data-tab="reservations">Réservations</button>
-        <button class="tab-btn" data-tab="blocked">Créneaux bloqués</button>
-        <button class="tab-btn" data-tab="announcements">Annonces</button>
+      <!-- Dashboard Tab -->
+      <div id="dashboard-tab" class="admin-tab active">
+        <h2>Tableau de bord</h2>
+        <div class="dashboard-stats">
+          <div class="stat-card">
+            <div class="stat-number" id="stat-bookings">0</div>
+            <div class="stat-label">Réservations</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="stat-today">0</div>
+            <div class="stat-label">Aujourd'hui</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="stat-week">0</div>
+            <div class="stat-label">Cette semaine</div>
+          </div>
+        </div>
+        <div id="upcoming-bookings" class="upcoming-bookings"></div>
       </div>
 
       <!-- Reservations Tab -->
-      <div id="reservations-tab" class="tab-content active">
+      <div id="reservations-tab" class="admin-tab">
+        <h2>Gestion des réservations</h2>
+        <div class="admin-filters">
+          <input type="date" id="filter-date" />
+          <select id="filter-coiffeur">
+            <option value="">Tous les coiffeurs</option>
+            <option value="malik">Malik</option>
+            <option value="elodie">Élodie</option>
+            <option value="lucia">Lucia</option>
+          </select>
+        </div>
         <table class="admin-table">
           <thead>
             <tr>
@@ -282,6 +421,7 @@
               <th>Client</th>
               <th>Email</th>
               <th>Service</th>
+              <th>Coiffeur</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -290,29 +430,50 @@
       </div>
 
       <!-- Blocked Slots Tab -->
-      <div id="blocked-tab" class="tab-content">
-        <h3>Bloquer des créneaux</h3>
-        <div class="form-group">
-          <label for="block-date">Date</label>
-          <input type="date" id="block-date" />
+      <div id="blocked-tab" class="admin-tab">
+        <h2>Bloquer des créneaux</h2>
+        <div class="block-form">
+          <div class="form-group">
+            <label for="block-date">Date</label>
+            <input type="date" id="block-date" />
+          </div>
+          <div class="form-group">
+            <label for="block-reason">Raison</label>
+            <input type="text" id="block-reason" placeholder="Ex: Fermeture, Vacances, Travaux..." />
+          </div>
+          <button id="block-submit" class="btn-primary">Bloquer</button>
         </div>
-        <div class="form-group">
-          <label for="block-reason">Raison</label>
-          <input type="text" id="block-reason" placeholder="Ex: Fermeture, Vacances, Travaux..." />
-        </div>
-        <button id="block-submit" class="btn-primary">Bloquer</button>
-        <div id="blocked-list"></div>
+        <div id="blocked-list" class="blocked-list"></div>
       </div>
 
       <!-- Announcements Tab -->
-      <div id="announcements-tab" class="tab-content">
-        <h3>Ajouter une annonce</h3>
-        <div class="form-group">
-          <label for="announcement-text">Message</label>
-          <textarea id="announcement-text" rows="4" placeholder="Votre annonce..."></textarea>
+      <div id="announcements-tab" class="admin-tab">
+        <h2>Annonces</h2>
+        <div class="announcement-form">
+          <div class="form-group">
+            <label for="announcement-text">Message</label>
+            <textarea id="announcement-text" rows="4" placeholder="Votre annonce..."></textarea>
+          </div>
+          <div class="form-group">
+            <label for="announcement-type">Type</label>
+            <select id="announcement-type">
+              <option value="info">Info</option>
+              <option value="warning">Avertissement</option>
+              <option value="closed">Fermé</option>
+            </select>
+          </div>
+          <button id="announcement-submit" class="btn-primary">Publier</button>
         </div>
-        <button id="announcement-submit" class="btn-primary">Publier</button>
-        <div id="announcements-list"></div>
+        <div id="announcements-list" class="announcements-list"></div>
+      </div>
+
+      <!-- Settings Tab -->
+      <div id="settings-tab" class="admin-tab">
+        <h2>Paramètres</h2>
+        <div class="settings-group">
+          <h3>Horaires d'ouverture</h3>
+          <div id="hours-settings"></div>
+        </div>
       </div>
     </div>
   </div>
