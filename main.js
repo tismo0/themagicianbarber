@@ -1,13 +1,17 @@
 const ADMIN_PASSWORD = "@admin48k";
 const STORAGE_KEY = "magician_bookings";
 const ADMIN_KEY = "magician_admin";
+const ADMIN_IP_KEY = "magician_admin_ip";
+const ADMIN_TIMEOUT = 24 * 60 * 60 * 1000; // 24 heures
 
 let bookings = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 let blockedDates = JSON.parse(localStorage.getItem("magician_blocked")) || [];
+let blockedHours = JSON.parse(localStorage.getItem("magician_blocked_hours")) || [];
 let announcements = JSON.parse(localStorage.getItem("magician_announcements")) || [];
 let isAdminLoggedIn = false;
 let selectedDate = null;
 let currentMonth = new Date();
+let userIP = null;
 
 const services = {
   "coupe-tondeuse": { name: "Coupe tondeuse", price: 13, duration: 20 },
@@ -31,7 +35,8 @@ const businessHours = {
   6: { start: "09:00", end: "18:00" }
 };
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await getUserIP();
   renderCalendar();
   setupEventListeners();
   checkAdminStatus();
@@ -103,6 +108,7 @@ function updateAvailableTimes(dateStr) {
   const hours = businessHours[dayOfWeek];
   const times = generateTimeSlots(hours.start, hours.end);
   const bookedTimes = getBookedTimesForDate(dateStr);
+  const blockedTimesForDate = blockedHours.filter(b => b.date === dateStr).map(b => b.time);
 
   timeInput.innerHTML = '<option value="">Sélectionnez un horaire</option>';
   times.forEach(time => {
@@ -112,6 +118,9 @@ function updateAvailableTimes(dateStr) {
     if (bookedTimes.includes(time)) {
       option.disabled = true;
       option.textContent += " (Occupé)";
+    } else if (blockedTimesForDate.includes(time)) {
+      option.disabled = true;
+      option.textContent += " (Indisponible)";
     }
     timeInput.appendChild(option);
   });
@@ -251,7 +260,11 @@ function handleAdminLogin() {
   const password = document.getElementById("admin-password").value;
   if (password === ADMIN_PASSWORD) {
     isAdminLoggedIn = true;
-    localStorage.setItem(ADMIN_KEY, "true");
+    const adminData = {
+      ip: userIP,
+      timestamp: Date.now()
+    };
+    localStorage.setItem(ADMIN_IP_KEY, JSON.stringify(adminData));
     closeAdminModal();
     openAdminPanel();
   } else {
@@ -267,8 +280,29 @@ function handleAdminLogout() {
 }
 
 function checkAdminStatus() {
-  if (localStorage.getItem(ADMIN_KEY) === "true") {
-    isAdminLoggedIn = true;
+  const adminData = JSON.parse(localStorage.getItem(ADMIN_IP_KEY));
+  
+  if (adminData && adminData.timestamp) {
+    const elapsed = Date.now() - adminData.timestamp;
+    
+    if (elapsed < ADMIN_TIMEOUT && adminData.ip === userIP) {
+      isAdminLoggedIn = true;
+      adminData.timestamp = Date.now();
+      localStorage.setItem(ADMIN_IP_KEY, JSON.stringify(adminData));
+    } else {
+      localStorage.removeItem(ADMIN_IP_KEY);
+      isAdminLoggedIn = false;
+    }
+  }
+}
+
+async function getUserIP() {
+  try {
+    const response = await fetch('https://api.ipify.org?format=json');
+    const data = await response.json();
+    userIP = data.ip;
+  } catch (e) {
+    userIP = "unknown";
   }
 }
 
@@ -301,6 +335,7 @@ function renderAdminPanel() {
   });
 
   renderBlockedDates();
+  renderBlockedHours();
   renderAnnouncements();
   updateDashboard();
 }
@@ -347,6 +382,45 @@ function blockDate() {
     renderBlockedDates();
     renderCalendar();
   }
+}
+
+function blockHour() {
+  const date = document.getElementById("block-hour-date").value;
+  const time = document.getElementById("block-hour-time").value;
+
+  if (date && time) {
+    blockedHours.push({ date, time });
+    localStorage.setItem("magician_blocked_hours", JSON.stringify(blockedHours));
+    document.getElementById("block-hour-date").value = "";
+    document.getElementById("block-hour-time").value = "";
+    renderBlockedHours();
+    renderCalendar();
+  }
+}
+
+function renderBlockedHours() {
+  const blockedHoursList = document.getElementById("blocked-hours-list");
+  if (!blockedHoursList) return;
+  
+  blockedHoursList.innerHTML = "";
+  blockedHours.forEach((blocked, index) => {
+    const div = document.createElement("div");
+    div.className = "blocked-item";
+    div.innerHTML = `
+      <div>
+        <p><strong>${blocked.date} à ${blocked.time}</strong></p>
+      </div>
+      <button class="btn-secondary" onclick="removeBlockedHour(${index})">Débloquer</button>
+    `;
+    blockedHoursList.appendChild(div);
+  });
+}
+
+function removeBlockedHour(index) {
+  blockedHours.splice(index, 1);
+  localStorage.setItem("magician_blocked_hours", JSON.stringify(blockedHours));
+  renderBlockedHours();
+  renderCalendar();
 }
 
 function renderBlockedDates() {
@@ -421,6 +495,21 @@ function displayAnnouncements() {
   banner.innerHTML = "";
 
   const activeAnnouncements = announcements.filter(a => a.type === "closed" || a.type === "warning");
+  
+  // Ajouter les raisons de fermeture des jours bloqués
+  blockedDates.forEach(blocked => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const blockedDate = new Date(blocked.date);
+    
+    if (blockedDate >= today) {
+      activeAnnouncements.push({
+        text: `${blocked.date}: ${blocked.reason}`,
+        type: "closed"
+      });
+    }
+  });
+
   if (activeAnnouncements.length > 0) {
     banner.classList.add("active");
     activeAnnouncements.forEach(ann => {
@@ -474,7 +563,92 @@ function searchBookings() {
 }
 
 function editBooking(id) {
-  alert("Fonctionnalité de modification en cours de développement");
+  const booking = bookings.find(b => b.id === id);
+  if (!booking) return;
+
+  const modal = document.createElement("div");
+  modal.className = "modal active";
+  modal.id = "edit-modal";
+  modal.innerHTML = `
+    <div class="modal-content">
+      <button class="modal-close" onclick="document.getElementById('edit-modal').remove()">×</button>
+      <h2>Modifier la réservation</h2>
+      <form id="edit-form">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="edit-date" value="${booking.date}" required />
+        </div>
+        <div class="form-group">
+          <label>Horaire</label>
+          <select id="edit-time" required>
+            <option value="${booking.time}">${booking.time}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="edit-notes" rows="3">${booking.notes || ""}</textarea>
+        </div>
+        <button type="submit" class="btn-primary">Enregistrer</button>
+      </form>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  document.getElementById("edit-date").addEventListener("change", (e) => {
+    updateEditTimes(e.target.value, booking.time);
+  });
+
+  document.getElementById("edit-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const newDate = document.getElementById("edit-date").value;
+    const newTime = document.getElementById("edit-time").value;
+    const newNotes = document.getElementById("edit-notes").value;
+
+    booking.date = newDate;
+    booking.time = newTime;
+    booking.notes = newNotes;
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
+    document.getElementById("edit-modal").remove();
+    searchBookings();
+    showMessage("Réservation modifiée avec succès", "success");
+  });
+
+  updateEditTimes(booking.date, booking.time);
+}
+
+function updateEditTimes(dateStr, currentTime) {
+  const date = new Date(dateStr);
+  const dayOfWeek = date.getDay();
+  const timeSelect = document.getElementById("edit-time");
+
+  if (!businessHours[dayOfWeek]) {
+    timeSelect.innerHTML = '<option value="">Fermé ce jour</option>';
+    return;
+  }
+
+  const hours = businessHours[dayOfWeek];
+  const times = generateTimeSlots(hours.start, hours.end);
+  const bookedTimes = getBookedTimesForDate(dateStr);
+  const blockedTimesForDate = blockedHours.filter(b => b.date === dateStr).map(b => b.time);
+
+  timeSelect.innerHTML = "";
+  times.forEach(time => {
+    const option = document.createElement("option");
+    option.value = time;
+    option.textContent = time;
+    if (time === currentTime) {
+      option.selected = true;
+    }
+    if (bookedTimes.includes(time) && time !== currentTime) {
+      option.disabled = true;
+      option.textContent += " (Occupé)";
+    } else if (blockedTimesForDate.includes(time) && time !== currentTime) {
+      option.disabled = true;
+      option.textContent += " (Indisponible)";
+    }
+    timeSelect.appendChild(option);
+  });
 }
 
 function cancelBooking(id) {

@@ -16,10 +16,10 @@
   <nav class="navbar">
     <div class="navbar-container">
       <div class="navbar-brand">
-        <div class="brand-logo">✂️</div>
+        <div class="brand-logo">TM</div>
         <div class="brand-info">
           <h1>The Magician</h1>
-          <p>Salon Premium</p>
+          <p>Salon de Coiffure Premium</p>
         </div>
       </div>
       <ul class="navbar-menu">
@@ -431,19 +431,35 @@
 
       <!-- Blocked Slots Tab -->
       <div id="blocked-tab" class="admin-tab">
-        <h2>Bloquer des créneaux</h2>
+        <h2>Gestion des créneaux</h2>
+        
+        <h3>Bloquer une journée entière</h3>
         <div class="block-form">
           <div class="form-group">
             <label for="block-date">Date</label>
             <input type="date" id="block-date" />
           </div>
           <div class="form-group">
-            <label for="block-reason">Raison</label>
+            <label for="block-reason">Raison (visible aux clients)</label>
             <input type="text" id="block-reason" placeholder="Ex: Fermeture, Vacances, Travaux..." />
           </div>
-          <button id="block-submit" class="btn-primary">Bloquer</button>
+          <button id="block-submit" class="btn-primary">Bloquer la journée</button>
         </div>
         <div id="blocked-list" class="blocked-list"></div>
+
+        <h3 style="margin-top: 2rem;">Bloquer une heure spécifique</h3>
+        <div class="block-form">
+          <div class="form-group">
+            <label for="block-hour-date">Date</label>
+            <input type="date" id="block-hour-date" />
+          </div>
+          <div class="form-group">
+            <label for="block-hour-time">Horaire</label>
+            <input type="time" id="block-hour-time" />
+          </div>
+          <button onclick="blockHour()" class="btn-primary">Bloquer l'horaire</button>
+        </div>
+        <div id="blocked-hours-list" class="blocked-list"></div>
       </div>
 
       <!-- Announcements Tab -->
