@@ -72,8 +72,8 @@ const CONFIG = {
 
   // Google Apps Script (à configurer)
   googleAppsScript: {
-    webAppUrl: "https://script.google.com/macros/s/YOUR_WEB_APP_ID_HERE/usercopy",
-    enabled: false, // Mettre à true une fois configuré
+    webAppUrl: "https://script.google.com/macros/s/AKfycbxVpXr6w5A39hJ0n4b2qmBhvlFLBuzIger6fcL9ygQdcFGcEa6Fqp-CS9tcQ1sEtloLjQ/exec",
+    enabled: true, // Mettre à true une fois configuré
   },
 
   // Intégrations (optionnel)
