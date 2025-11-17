@@ -751,6 +751,7 @@ img {
 .booking {
   background: linear-gradient(180deg, #ffffff 0%, #fafaf8 100%);
   position: relative;
+  padding: clamp(2rem, 4vw, 4rem) clamp(1rem, 3vw, 3rem);
 }
 
 .booking::before {
@@ -780,29 +781,93 @@ img {
 
 @media (max-width: 640px) {
   .calendar-grid {
-    gap: 0.4rem;
+    gap: 0.5rem;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
   }
 
   .calendar-day {
+    font-size: 0.85rem;
+    padding: 0.6rem 0.3rem;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .calendar-day-number {
     font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .calendar-day-summary {
+    font-size: 0.6rem;
   }
 
   .calendar-head {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
   }
 
   .calendar-title {
-    width: 100%;
-    text-align: center;
+    font-size: 1.2rem;
+    flex: 1;
+    text-align: left;
+  }
+
+  .calendar-nav {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+
+  .calendar-panel {
+    padding: 1.2rem;
+    gap: 1rem;
   }
 
   .time-slot-list {
-    gap: 0.4rem;
+    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
   }
 
   .time-slot {
-    padding: 0.45rem 0.8rem;
+    padding: 0.6rem 0.5rem;
+    font-size: 0.85rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .time-slot-panel {
+    padding: 1.2rem;
+    gap: 1rem;
+  }
+
+  .booking-form {
+    padding: 1.2rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-group label {
     font-size: 0.9rem;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    font-size: 1rem;
+    padding: 0.6rem;
+  }
+
+  .btn-primary {
+    padding: 0.7rem 1.5rem;
+    font-size: 0.95rem;
   }
 }
 
@@ -1287,11 +1352,17 @@ code {
     flex-wrap: wrap;
     justify-content: center;
     gap: 1rem 2.5rem;
+    padding: 0.8rem 1rem;
   }
 
   .nav-links {
     flex-wrap: wrap;
     justify-content: center;
+    gap: 0.8rem 1.5rem;
+  }
+
+  .nav-links a {
+    font-size: 0.9rem;
   }
 
   .hero-text {
@@ -1349,6 +1420,38 @@ code {
     padding: 0.9rem 1rem;
   }
 
+  .booking-layout {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .calendar-panel {
+    order: -1;
+  }
+
+  .calendar-day {
+    min-height: 55px;
+    padding: 0.5rem 0.2rem;
+  }
+
+  .time-slot-list {
+    grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
+  }
+
+  .time-slot {
+    min-height: 40px;
+    padding: 0.5rem 0.4rem;
+    font-size: 0.8rem;
+  }
+
+  .booking-section {
+    padding: 1.5rem 1rem;
+  }
+
+  .booking-layout {
+    gap: 1rem;
+  }
+
   .brand-mark {
     width: 42px;
     height: 42px;
@@ -1356,7 +1459,7 @@ code {
   }
 
   .booking-form {
-    padding: 1.6rem;
+    padding: 1.2rem;
   }
 
   .btn-primary {
