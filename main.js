@@ -610,6 +610,7 @@ async function fetchBookingsAndRefresh({ silent = false } = {}) {
     console.log("CSV chargé:", lines.length, "lignes");
     
     // Parse CSV (skip header)
+    const bookings = [];
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i];
       if (!line.trim()) continue;
@@ -634,12 +635,13 @@ async function fetchBookingsAndRefresh({ silent = false } = {}) {
       
       const [date, time, email, instagram, service, details] = values;
       if (date && time) {
-        const key = `${date}-${time}`;
-        bookingsByDate.set(key, { date, time, email, instagram, service, details });
-        console.log("Réservation chargée:", key);
+        bookings.push({ date, time, email, instagram, service, details });
+        console.log("Réservation chargée:", date, time);
       }
     }
 
+    // Index les réservations correctement
+    indexBookings(bookings);
     renderCalendar({ preserveSelection: true });
   } catch (error) {
     console.error("Erreur lors du chargement des réservations", error);
