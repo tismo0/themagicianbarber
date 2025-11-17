@@ -72,7 +72,7 @@ const CONFIG = {
 
   // Google Apps Script (à configurer)
   googleAppsScript: {
-    webAppUrl: "https://script.google.com/macros/s/AKfycbxVpXr6w5A39hJ0n4b2qmBhvlFLBuzIger6fcL9ygQdcFGcEa6Fqp-CS9tcQ1sEtloLjQ/exec",
+    webAppUrl: "https://script.google.com/macros/s/AKfycbwhj5AWnpznNEJ17ZzX50NMNa5tesBkjDZGlYE_oFC44j3k6QJkKuLWPODXT5RriiT_pA/exec",
     enabled: true, // Mettre à true une fois configuré
   },
 
