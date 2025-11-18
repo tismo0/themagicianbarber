@@ -722,6 +722,32 @@ function renderBlockedHours() {
 }
 
 function removeBlockedHour(index) {
+  const blocked = blockedHours[index];
+  if (!blocked) return;
+
+  // Envoyer la suppression à Google Sheets via Apps Script
+  const GOOGLE_WEBAPP_URL = (typeof CONFIG !== "undefined" && CONFIG.googleAppsScript?.webAppUrl)
+    ? CONFIG.googleAppsScript.webAppUrl
+    : "";
+
+  if (GOOGLE_WEBAPP_URL) {
+    fetch(GOOGLE_WEBAPP_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "delete_blockage",
+        type: "heure",
+        date: blocked.date,
+        time: blocked.time,
+        reason: ""
+      }),
+      mode: "no-cors"
+    }).catch((error) => {
+      console.error("Erreur lors de la suppression du blocage horaire dans Google Sheets:", error);
+    });
+  }
+
+  // Mettre à jour localement
   blockedHours.splice(index, 1);
   localStorage.setItem("magician_blocked_hours", JSON.stringify(blockedHours));
   renderBlockedHours();
@@ -747,6 +773,32 @@ function renderBlockedDates() {
 }
 
 function removeBlockedDate(index) {
+  const blocked = blockedDates[index];
+  if (!blocked) return;
+
+  // Envoyer la suppression à Google Sheets via Apps Script
+  const GOOGLE_WEBAPP_URL = (typeof CONFIG !== "undefined" && CONFIG.googleAppsScript?.webAppUrl)
+    ? CONFIG.googleAppsScript.webAppUrl
+    : "";
+
+  if (GOOGLE_WEBAPP_URL) {
+    fetch(GOOGLE_WEBAPP_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "delete_blockage",
+        type: "jour",
+        date: blocked.date,
+        time: "",
+        reason: blocked.reason || ""
+      }),
+      mode: "no-cors"
+    }).catch((error) => {
+      console.error("Erreur lors de la suppression du jour bloqué dans Google Sheets:", error);
+    });
+  }
+
+  // Mettre à jour localement
   blockedDates.splice(index, 1);
   localStorage.setItem("magician_blocked", JSON.stringify(blockedDates));
   renderBlockedDates();
@@ -818,6 +870,31 @@ function renderAnnouncements() {
 }
 
 function removeAnnouncement(index) {
+  const ann = announcements[index];
+  if (!ann) return;
+
+  // Envoyer la suppression à Google Sheets via Apps Script
+  const GOOGLE_WEBAPP_URL = (typeof CONFIG !== "undefined" && CONFIG.googleAppsScript?.webAppUrl)
+    ? CONFIG.googleAppsScript.webAppUrl
+    : "";
+
+  if (GOOGLE_WEBAPP_URL) {
+    fetch(GOOGLE_WEBAPP_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "delete_announcement",
+        id: ann.id,
+        text: ann.text,
+        type: ann.type
+      }),
+      mode: "no-cors"
+    }).catch((error) => {
+      console.error("Erreur lors de la suppression de l'annonce dans Google Sheets:", error);
+    });
+  }
+
+  // Mettre à jour localement
   announcements.splice(index, 1);
   localStorage.setItem("magician_announcements", JSON.stringify(announcements));
   renderAnnouncements();
