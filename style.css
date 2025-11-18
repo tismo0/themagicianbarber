@@ -46,7 +46,7 @@ body { font-family: "Poppins", sans-serif; background: var(--white); color: var(
 .navbar-menu a:hover::after { width: 100%; }
 .btn-admin { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: var(--dark); border: none; padding: 0.6rem 1.2rem; border-radius: var(--radius); cursor: pointer; font-weight: 600; transition: var(--transition); }
 .btn-admin:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3); }
-.navbar-toggle { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+.navbar-toggle { display: none; background: var(--white); border: 1px solid var(--gray); font-size: 1.5rem; cursor: pointer; padding: 0.3rem 0.6rem; border-radius: 6px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); }
 
 .announcements-banner { background: linear-gradient(135deg, var(--warning), #ff7043); color: var(--white); padding: 1.2rem; text-align: center; font-weight: 600; display: none; animation: slideDown 0.3s ease-out; }
 .announcements-banner.active { display: block; }
@@ -219,11 +219,15 @@ section { padding: 5rem 0; }
   .hero-title { font-size: 2rem; }
   .booking-wrapper { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
-  .admin-panel { max-width: 100%; }
-  .admin-sidebar { width: 100%; max-height: 60px; display: flex; align-items: center; padding: 0; overflow-x: auto; }
-  .admin-nav { flex-direction: row; overflow-x: auto; gap: 0; }
-  .admin-nav-btn { padding: 1rem 1.2rem; white-space: nowrap; }
-  .admin-content { padding: 1rem; }
+  /* Admin panel plein écran et propre sur mobile */
+  .admin-panel { max-width: 100%; left: 0; right: 0; flex-direction: column; }
+  .admin-sidebar { width: 100%; max-height: none; padding: 1rem 1rem 0.5rem; overflow-x: visible; overflow-y: visible; }
+  .admin-header { padding: 0 0 0.5rem; margin-bottom: 0.5rem; }
+  .admin-header h2 { font-size: 1.1rem; }
+  .admin-nav { flex-direction: row; overflow-x: auto; gap: 0.5rem; padding: 0.25rem 0 0.5rem; }
+  .admin-nav-btn { padding: 0.6rem 0.9rem; white-space: nowrap; font-size: 0.9rem; }
+  .btn-logout { margin: 0.5rem 0 0; padding: 0.6rem 1rem; font-size: 0.9rem; }
+  .admin-content { padding: 1rem; height: calc(100vh - 120px); }
   .admin-table { font-size: 0.85rem; }
   .admin-table th, .admin-table td { padding: 0.7rem; }
   section { padding: 3rem 0; }
