@@ -77,17 +77,8 @@ function renderCalendar() {
     } else if (isDateBlocked(dateStr)) {
       dayElement.classList.add("closed");
     } else {
-      const bookingCount = bookings.filter(b => b.date === dateStr).length;
-      const availableSlots = maxStylists - bookingCount;
-      
-      if (availableSlots <= 0) {
+      if (hasBookingsOnDate(dateStr)) {
         dayElement.classList.add("has-booking");
-        dayElement.title = "Complet";
-      } else if (availableSlots <= 1) {
-        dayElement.classList.add("has-booking");
-        dayElement.title = "1 place restante";
-      } else {
-        dayElement.title = `${availableSlots} places restantes`;
       }
       dayElement.addEventListener("click", () => selectDate(dateStr, dayElement));
     }
@@ -110,7 +101,6 @@ function updateAvailableTimes(dateStr) {
   const date = new Date(dateStr);
   const dayOfWeek = date.getDay();
   const timeInput = document.getElementById("time");
-  const maxStylists = team.length; // Nombre de coiffeurs
 
   if (!businessHours[dayOfWeek]) {
     timeInput.innerHTML = '<option value="">Fermé ce jour</option>';
@@ -129,18 +119,13 @@ function updateAvailableTimes(dateStr) {
     option.textContent = time;
     
     const bookedCount = bookedTimes.filter(t => t === time).length;
-    const availableCount = maxStylists - bookedCount;
 
     if (blockedTimesForDate.includes(time)) {
       option.disabled = true;
       option.textContent += " (Indisponible)";
-    } else if (bookedCount >= maxStylists) {
+    } else if (bookedCount >= team.length) {
       option.disabled = true;
       option.textContent += " (Complet)";
-    } else if (availableCount === 1) {
-      option.textContent += " (1 place restante)";
-    } else {
-      option.textContent += ` (${availableCount} places restantes)`;
     }
     timeInput.appendChild(option);
   });
@@ -433,7 +418,7 @@ function updateCalendarLegend() {
       <span class="legend-available"></span> Disponible
     </div>
     <div>
-      <span class="legend-booked"></span> Quelques places
+      <span class="legend-booked"></span> Réservations
     </div>
     <div>
       <span class="legend-closed"></span> Fermé
@@ -670,7 +655,6 @@ function updateEditTimes(dateStr, currentTime) {
   const date = new Date(dateStr);
   const dayOfWeek = date.getDay();
   const timeSelect = document.getElementById("edit-time");
-  const maxStylists = team.length;
 
   if (!businessHours[dayOfWeek]) {
     timeSelect.innerHTML = '<option value="">Fermé ce jour</option>';
@@ -689,7 +673,6 @@ function updateEditTimes(dateStr, currentTime) {
     option.textContent = time;
     
     const bookedCount = bookedTimes.filter(t => t === time).length;
-    const availableCount = maxStylists - bookedCount;
 
     if (time === currentTime) {
       option.selected = true;
@@ -698,15 +681,9 @@ function updateEditTimes(dateStr, currentTime) {
     if (blockedTimesForDate.includes(time) && time !== currentTime) {
       option.disabled = true;
       option.textContent += " (Indisponible)";
-    } else if (bookedCount >= maxStylists && time !== currentTime) {
+    } else if (bookedCount >= team.length && time !== currentTime) {
       option.disabled = true;
       option.textContent += " (Complet)";
-    } else if (time !== currentTime) {
-      if (availableCount === 1) {
-        option.textContent += " (1 place restante)";
-      } else {
-        option.textContent += ` (${availableCount} places restantes)`;
-      }
     }
     timeSelect.appendChild(option);
   });
