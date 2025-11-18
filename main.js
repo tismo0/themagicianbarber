@@ -447,6 +447,29 @@ async function handleBookingSubmit(e) {
     return;
   }
 
+  // Envoyer la réservation à Google Sheets via Apps Script (source centrale)
+  const GOOGLE_WEBAPP_URL =
+    (typeof CONFIG !== "undefined" && CONFIG.googleAppsScript?.enabled && CONFIG.googleAppsScript.webAppUrl)
+      ? CONFIG.googleAppsScript.webAppUrl
+      : "";
+
+  if (GOOGLE_WEBAPP_URL) {
+    try {
+      await fetch(GOOGLE_WEBAPP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "booking",
+          ...formData
+        }),
+        mode: "no-cors"
+      });
+    } catch (error) {
+      console.error("Erreur lors de l'envoi de la réservation vers Google Sheets:", error);
+    }
+  }
+
+  // Mettre à jour l'état local pour l'affichage immédiat
   bookings.push(formData);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
 
