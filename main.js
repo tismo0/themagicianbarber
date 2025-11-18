@@ -824,9 +824,6 @@ function removeAnnouncement(index) {
   displayAnnouncements();
 }
 
-let currentAnnouncementIndex = 0;
-let announcementRotationInterval = null;
-
 function displayAnnouncements() {
   const banner = document.getElementById("announcements-banner");
   banner.innerHTML = "";
@@ -849,27 +846,32 @@ function displayAnnouncements() {
 
   if (activeAnnouncements.length > 0) {
     banner.classList.add("active");
-    currentAnnouncementIndex = 0;
     
-    // Afficher la première annonce
-    const p = document.createElement("p");
-    p.textContent = activeAnnouncements[0].text;
-    banner.appendChild(p);
+    // Créer le conteneur de défilement
+    const content = document.createElement("div");
+    content.className = "announcements-banner-content";
     
-    // Si plusieurs annonces, faire défiler
-    if (activeAnnouncements.length > 1) {
-      clearInterval(announcementRotationInterval);
-      announcementRotationInterval = setInterval(() => {
-        currentAnnouncementIndex = (currentAnnouncementIndex + 1) % activeAnnouncements.length;
-        const newP = document.createElement("p");
-        newP.textContent = activeAnnouncements[currentAnnouncementIndex].text;
-        banner.innerHTML = "";
-        banner.appendChild(newP);
-      }, 5000); // Change d'annonce toutes les 5 secondes
-    }
+    // Ajouter toutes les annonces + doublage pour effet infini
+    activeAnnouncements.forEach(ann => {
+      const p = document.createElement("p");
+      p.textContent = ann.text;
+      content.appendChild(p);
+    });
+    
+    // Doubler les annonces pour effet de boucle infinie
+    activeAnnouncements.forEach(ann => {
+      const p = document.createElement("p");
+      p.textContent = ann.text;
+      content.appendChild(p);
+    });
+    
+    banner.appendChild(content);
+    
+    // Calculer la durée de l'animation basée sur le nombre d'annonces
+    const duration = activeAnnouncements.length * 8; // 8 secondes par annonce
+    content.style.animationDuration = duration + "s";
   } else {
     banner.classList.remove("active");
-    clearInterval(announcementRotationInterval);
   }
 }
 

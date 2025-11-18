@@ -36,12 +36,12 @@ body { font-family: "Poppins", sans-serif; background: var(--light-bg); color: v
 .navbar-toggle { display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: var(--text-dark); }
 
 /* ANNOUNCEMENTS */
-@keyframes slideAnnouncements { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-@keyframes fadeOutAnnouncements { from { opacity: 1; } to { opacity: 0; } }
+@keyframes scrollAnnouncements { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-.announcements-banner { position: relative; background: linear-gradient(90deg, rgba(212,175,55,0.15), rgba(212,175,55,0.25), rgba(212,175,55,0.15)); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(212,175,55,0.3); padding: 0.7rem 2rem; text-align: center; font-weight: 500; display: none; overflow: hidden; height: 50px; display: flex; align-items: center; justify-content: center; }
-.announcements-banner.active { display: flex; }
-.announcements-banner p { margin: 0; font-size: 0.9rem; color: var(--text-dark); letter-spacing: 0.5px; animation: slideAnnouncements 0.6s ease-out; white-space: nowrap; }
+.announcements-banner { position: relative; background: linear-gradient(90deg, rgba(212,175,55,0.15), rgba(212,175,55,0.25), rgba(212,175,55,0.15)); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(212,175,55,0.3); padding: 0.7rem 0; text-align: center; font-weight: 500; display: none; overflow: hidden; height: 50px; }
+.announcements-banner.active { display: block; }
+.announcements-banner-content { display: flex; align-items: center; height: 100%; animation: scrollAnnouncements linear infinite; padding: 0 2rem; }
+.announcements-banner p { margin: 0; font-size: 0.9rem; color: var(--text-dark); letter-spacing: 0.5px; white-space: nowrap; padding: 0 3rem; display: inline-flex; align-items: center; }
 .announcements-banner p::before { content: "✦ "; color: var(--primary); margin-right: 0.5rem; }
 .announcements-banner p::after { content: " ✦"; color: var(--primary); margin-left: 0.5rem; }
 
