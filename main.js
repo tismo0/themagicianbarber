@@ -34,23 +34,31 @@ const businessHours = {
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // Charger les réservations depuis Google Sheets (source unique)
-  await loadBookingsFromGoogleSheets();
+  // Charger TOUTES les données depuis Google Sheets (source unique)
+  await loadAllDataFromGoogleSheets();
   renderCalendar();
   updateCalendarLegend();
   setupEventListeners();
   checkAdminStatus();
   displayAnnouncements();
   
-  // Recharger les réservations toutes les 30 secondes pour synchroniser entre appareils
+  // Recharger TOUTES les données toutes les 30 secondes pour synchroniser entre appareils
   setInterval(async () => {
-    await loadBookingsFromGoogleSheets();
+    await loadAllDataFromGoogleSheets();
     renderCalendar();
     updateCalendarLegend();
+    displayAnnouncements();
   }, 30000);
 });
 
-// Charger les réservations depuis Google Sheets (source unique de vérité)
+// Charger TOUTES les données depuis Google Sheets (source unique de vérité)
+async function loadAllDataFromGoogleSheets() {
+  await loadBookingsFromGoogleSheets();
+  await loadBlockagesFromGoogleSheets();
+  await loadAnnouncementsFromGoogleSheets();
+}
+
+// Charger les réservations depuis Google Sheets
 async function loadBookingsFromGoogleSheets() {
   try {
     const spreadsheetId = (typeof CONFIG !== "undefined" && CONFIG.googleAppsScript?.spreadsheetId)
@@ -120,6 +128,131 @@ async function loadBookingsFromGoogleSheets() {
     console.log(`✅ ${bookings.length} réservations chargées depuis Google Sheets`);
   } catch (error) {
     console.error("Erreur lors du chargement des réservations:", error);
+  }
+}
+
+// Charger les blocages (dates fermées + heures bloquées) depuis Google Sheets
+async function loadBlockagesFromGoogleSheets() {
+  try {
+    const spreadsheetId = (typeof CONFIG !== "undefined" && CONFIG.googleAppsScript?.spreadsheetId)
+      ? CONFIG.googleAppsScript.spreadsheetId
+      : null;
+
+    if (!spreadsheetId) return;
+
+    // Charger depuis l'onglet "Blocages"
+    const csvUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&sheet=Blocages`;
+    const response = await fetch(csvUrl);
+    
+    if (!response.ok) {
+      console.warn("Impossible de charger les blocages depuis Google Sheets");
+      return;
+    }
+
+    const csv = await response.text();
+    const lines = csv.trim().split("\n");
+    
+    blockedDates = [];
+    blockedHours = [];
+    
+    // Parse CSV (skip header)
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i];
+      if (!line.trim()) continue;
+      
+      // Parse CSV en gérant les guillemets
+      const values = [];
+      let current = "";
+      let inQuotes = false;
+      
+      for (let j = 0; j < line.length; j++) {
+        const char = line[j];
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === "," && !inQuotes) {
+          values.push(current.trim().replace(/^"|"$/g, ""));
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+      values.push(current.trim().replace(/^"|"$/g, ""));
+      
+      const [type, date, time, reason] = values;
+      
+      if (type === "jour" && date && reason) {
+        blockedDates.push({ date, reason });
+      } else if (type === "heure" && date && time) {
+        blockedHours.push({ date, time });
+      }
+    }
+
+    // Sauvegarder en cache local
+    localStorage.setItem("magician_blocked", JSON.stringify(blockedDates));
+    localStorage.setItem("magician_blocked_hours", JSON.stringify(blockedHours));
+    console.log(`✅ ${blockedDates.length} jours bloqués, ${blockedHours.length} heures bloquées`);
+  } catch (error) {
+    console.error("Erreur lors du chargement des blocages:", error);
+  }
+}
+
+// Charger les annonces depuis Google Sheets
+async function loadAnnouncementsFromGoogleSheets() {
+  try {
+    const spreadsheetId = (typeof CONFIG !== "undefined" && CONFIG.googleAppsScript?.spreadsheetId)
+      ? CONFIG.googleAppsScript.spreadsheetId
+      : null;
+
+    if (!spreadsheetId) return;
+
+    // Charger depuis l'onglet "Annonces"
+    const csvUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&sheet=Annonces`;
+    const response = await fetch(csvUrl);
+    
+    if (!response.ok) {
+      console.warn("Impossible de charger les annonces depuis Google Sheets");
+      return;
+    }
+
+    const csv = await response.text();
+    const lines = csv.trim().split("\n");
+    
+    announcements = [];
+    
+    // Parse CSV (skip header)
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i];
+      if (!line.trim()) continue;
+      
+      // Parse CSV en gérant les guillemets
+      const values = [];
+      let current = "";
+      let inQuotes = false;
+      
+      for (let j = 0; j < line.length; j++) {
+        const char = line[j];
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === "," && !inQuotes) {
+          values.push(current.trim().replace(/^"|"$/g, ""));
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+      values.push(current.trim().replace(/^"|"$/g, ""));
+      
+      const [id, text, type] = values;
+      if (text) {
+        announcements.push({ id: id || Date.now().toString(), text, type: type || "info" });
+      }
+    }
+
+    // Sauvegarder en cache local
+    localStorage.setItem("magician_announcements", JSON.stringify(announcements));
+    console.log(`✅ ${announcements.length} annonces chargées depuis Google Sheets`);
+  } catch (error) {
+    console.error("Erreur lors du chargement des annonces:", error);
   }
 }
 
