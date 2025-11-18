@@ -38,6 +38,7 @@ const businessHours = {
 document.addEventListener("DOMContentLoaded", async () => {
   await getUserIP();
   renderCalendar();
+  updateCalendarLegend();
   setupEventListeners();
   checkAdminStatus();
   displayAnnouncements();
@@ -56,6 +57,7 @@ function renderCalendar() {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+  const maxStylists = team.length;
 
   for (let i = 0; i < (firstDay === 0 ? 6 : firstDay - 1); i++) {
     const emptyDay = document.createElement("div");
@@ -75,8 +77,17 @@ function renderCalendar() {
     } else if (isDateBlocked(dateStr)) {
       dayElement.classList.add("closed");
     } else {
-      if (hasBookingsOnDate(dateStr)) {
+      const bookingCount = bookings.filter(b => b.date === dateStr).length;
+      const availableSlots = maxStylists - bookingCount;
+      
+      if (availableSlots <= 0) {
         dayElement.classList.add("has-booking");
+        dayElement.title = "Complet";
+      } else if (availableSlots <= 1) {
+        dayElement.classList.add("has-booking");
+        dayElement.title = "1 place restante";
+      } else {
+        dayElement.title = `${availableSlots} places restantes`;
       }
       dayElement.addEventListener("click", () => selectDate(dateStr, dayElement));
     }
@@ -99,6 +110,7 @@ function updateAvailableTimes(dateStr) {
   const date = new Date(dateStr);
   const dayOfWeek = date.getDay();
   const timeInput = document.getElementById("time");
+  const maxStylists = team.length; // Nombre de coiffeurs
 
   if (!businessHours[dayOfWeek]) {
     timeInput.innerHTML = '<option value="">Fermé ce jour</option>';
@@ -115,12 +127,20 @@ function updateAvailableTimes(dateStr) {
     const option = document.createElement("option");
     option.value = time;
     option.textContent = time;
-    if (bookedTimes.includes(time)) {
-      option.disabled = true;
-      option.textContent += " (Occupé)";
-    } else if (blockedTimesForDate.includes(time)) {
+    
+    const bookedCount = bookedTimes.filter(t => t === time).length;
+    const availableCount = maxStylists - bookedCount;
+
+    if (blockedTimesForDate.includes(time)) {
       option.disabled = true;
       option.textContent += " (Indisponible)";
+    } else if (bookedCount >= maxStylists) {
+      option.disabled = true;
+      option.textContent += " (Complet)";
+    } else if (availableCount === 1) {
+      option.textContent += " (1 place restante)";
+    } else {
+      option.textContent += ` (${availableCount} places restantes)`;
     }
     timeInput.appendChild(option);
   });
@@ -168,11 +188,13 @@ function setupEventListeners() {
   document.getElementById("prev-month").addEventListener("click", () => {
     currentMonth.setMonth(currentMonth.getMonth() - 1);
     renderCalendar();
+    updateCalendarLegend();
   });
 
   document.getElementById("next-month").addEventListener("click", () => {
     currentMonth.setMonth(currentMonth.getMonth() + 1);
     renderCalendar();
+    updateCalendarLegend();
   });
 
   document.getElementById("booking-form").addEventListener("submit", handleBookingSubmit);
@@ -235,6 +257,7 @@ async function handleBookingSubmit(e) {
   document.getElementById("booking-form").reset();
   selectedDate = null;
   renderCalendar();
+  updateCalendarLegend();
 }
 
 function showMessage(message, type) {
@@ -381,6 +404,8 @@ function blockDate() {
     document.getElementById("block-reason").value = "";
     renderBlockedDates();
     renderCalendar();
+    updateCalendarLegend();
+    displayAnnouncements();
   }
 }
 
@@ -395,7 +420,25 @@ function blockHour() {
     document.getElementById("block-hour-time").value = "";
     renderBlockedHours();
     renderCalendar();
+    updateCalendarLegend();
   }
+}
+
+function updateCalendarLegend() {
+  const legend = document.querySelector(".calendar-legend");
+  if (!legend) return;
+  
+  legend.innerHTML = `
+    <div>
+      <span class="legend-available"></span> Disponible
+    </div>
+    <div>
+      <span class="legend-booked"></span> Quelques places
+    </div>
+    <div>
+      <span class="legend-closed"></span> Fermé
+    </div>
+  `;
 }
 
 function renderBlockedHours() {
@@ -421,6 +464,7 @@ function removeBlockedHour(index) {
   localStorage.setItem("magician_blocked_hours", JSON.stringify(blockedHours));
   renderBlockedHours();
   renderCalendar();
+  updateCalendarLegend();
 }
 
 function renderBlockedDates() {
@@ -445,6 +489,8 @@ function removeBlockedDate(index) {
   localStorage.setItem("magician_blocked", JSON.stringify(blockedDates));
   renderBlockedDates();
   renderCalendar();
+  updateCalendarLegend();
+  displayAnnouncements();
 }
 
 function addAnnouncement() {
@@ -525,6 +571,7 @@ function deleteBooking(id) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
   renderAdminPanel();
   renderCalendar();
+  updateCalendarLegend();
 }
 
 function searchBookings() {
@@ -611,6 +658,8 @@ function editBooking(id) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
     document.getElementById("edit-modal").remove();
     searchBookings();
+    renderCalendar();
+    updateCalendarLegend();
     showMessage("Réservation modifiée avec succès", "success");
   });
 
@@ -621,6 +670,7 @@ function updateEditTimes(dateStr, currentTime) {
   const date = new Date(dateStr);
   const dayOfWeek = date.getDay();
   const timeSelect = document.getElementById("edit-time");
+  const maxStylists = team.length;
 
   if (!businessHours[dayOfWeek]) {
     timeSelect.innerHTML = '<option value="">Fermé ce jour</option>';
@@ -637,15 +687,26 @@ function updateEditTimes(dateStr, currentTime) {
     const option = document.createElement("option");
     option.value = time;
     option.textContent = time;
+    
+    const bookedCount = bookedTimes.filter(t => t === time).length;
+    const availableCount = maxStylists - bookedCount;
+
     if (time === currentTime) {
       option.selected = true;
     }
-    if (bookedTimes.includes(time) && time !== currentTime) {
-      option.disabled = true;
-      option.textContent += " (Occupé)";
-    } else if (blockedTimesForDate.includes(time) && time !== currentTime) {
+    
+    if (blockedTimesForDate.includes(time) && time !== currentTime) {
       option.disabled = true;
       option.textContent += " (Indisponible)";
+    } else if (bookedCount >= maxStylists && time !== currentTime) {
+      option.disabled = true;
+      option.textContent += " (Complet)";
+    } else if (time !== currentTime) {
+      if (availableCount === 1) {
+        option.textContent += " (1 place restante)";
+      } else {
+        option.textContent += ` (${availableCount} places restantes)`;
+      }
     }
     timeSelect.appendChild(option);
   });
@@ -656,6 +717,8 @@ function cancelBooking(id) {
     bookings = bookings.filter(b => b.id !== id);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
     searchBookings();
+    renderCalendar();
+    updateCalendarLegend();
   }
 }
 

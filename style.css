@@ -112,6 +112,8 @@ section { padding: 5rem 0; }
 .calendar-day.disabled { opacity: 0.4; cursor: not-allowed; background: var(--gray); }
 .calendar-day.closed { opacity: 0.6; cursor: not-allowed; background: #ffebee; border-color: var(--error); color: var(--error); }
 .calendar-day.has-booking::after { content: "•"; position: absolute; top: 2px; right: 5px; font-size: 1rem; color: var(--primary); }
+.calendar-day[title]::before { content: attr(title); position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); background: var(--dark); color: var(--white); padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.7rem; white-space: nowrap; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 10; }
+.calendar-day[title]:hover::before { opacity: 1; }
 .calendar-legend { display: flex; gap: 2rem; font-size: 0.9rem; padding-top: 1rem; border-top: 1px solid var(--gray); flex-wrap: wrap; }
 .legend-available, .legend-booked, .legend-closed { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
 .legend-available { background: var(--white); border: 2px solid var(--gray); }
