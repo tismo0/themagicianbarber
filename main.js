@@ -579,34 +579,84 @@ function updateDashboard() {
   });
 }
 
-function blockDate() {
+async function blockDate() {
   const date = document.getElementById("block-date").value;
   const reason = document.getElementById("block-reason").value;
 
   if (date && reason) {
-    blockedDates.push({ date, reason });
-    localStorage.setItem("magician_blocked", JSON.stringify(blockedDates));
-    document.getElementById("block-date").value = "";
-    document.getElementById("block-reason").value = "";
-    renderBlockedDates();
-    renderCalendar();
-    updateCalendarLegend();
-    displayAnnouncements();
+    try {
+      // Envoyer à Google Sheets via App Script
+      const GOOGLE_WEBAPP_URL = (typeof CONFIG !== "undefined" && CONFIG.googleAppsScript?.webAppUrl)
+        ? CONFIG.googleAppsScript.webAppUrl
+        : "";
+      
+      if (GOOGLE_WEBAPP_URL) {
+        await fetch(GOOGLE_WEBAPP_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "blockage",
+            type: "jour",
+            date,
+            time: "",
+            reason
+          }),
+          mode: "no-cors"
+        });
+      }
+      
+      // Ajouter localement aussi
+      blockedDates.push({ date, reason });
+      localStorage.setItem("magician_blocked", JSON.stringify(blockedDates));
+      document.getElementById("block-date").value = "";
+      document.getElementById("block-reason").value = "";
+      renderBlockedDates();
+      renderCalendar();
+      updateCalendarLegend();
+      displayAnnouncements();
+    } catch (error) {
+      console.error("Erreur lors du blocage de la date:", error);
+    }
   }
 }
 
-function blockHour() {
+async function blockHour() {
   const date = document.getElementById("block-hour-date").value;
   const time = document.getElementById("block-hour-time").value;
 
   if (date && time) {
-    blockedHours.push({ date, time });
-    localStorage.setItem("magician_blocked_hours", JSON.stringify(blockedHours));
-    document.getElementById("block-hour-date").value = "";
-    document.getElementById("block-hour-time").value = "";
-    renderBlockedHours();
-    renderCalendar();
-    updateCalendarLegend();
+    try {
+      // Envoyer à Google Sheets via App Script
+      const GOOGLE_WEBAPP_URL = (typeof CONFIG !== "undefined" && CONFIG.googleAppsScript?.webAppUrl)
+        ? CONFIG.googleAppsScript.webAppUrl
+        : "";
+      
+      if (GOOGLE_WEBAPP_URL) {
+        await fetch(GOOGLE_WEBAPP_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "blockage",
+            type: "heure",
+            date,
+            time,
+            reason: ""
+          }),
+          mode: "no-cors"
+        });
+      }
+      
+      // Ajouter localement aussi
+      blockedHours.push({ date, time });
+      localStorage.setItem("magician_blocked_hours", JSON.stringify(blockedHours));
+      document.getElementById("block-hour-date").value = "";
+      document.getElementById("block-hour-time").value = "";
+      renderBlockedHours();
+      renderCalendar();
+      updateCalendarLegend();
+    } catch (error) {
+      console.error("Erreur lors du blocage de l'heure:", error);
+    }
   }
 }
 
@@ -679,21 +729,47 @@ function removeBlockedDate(index) {
   displayAnnouncements();
 }
 
-function addAnnouncement() {
+async function addAnnouncement() {
   const text = document.getElementById("announcement-text").value;
   const type = document.getElementById("announcement-type").value;
 
   if (text) {
-    announcements.push({
-      id: Date.now().toString(),
-      text,
-      type,
-      createdAt: new Date().toISOString()
-    });
-    localStorage.setItem("magician_announcements", JSON.stringify(announcements));
-    document.getElementById("announcement-text").value = "";
-    renderAnnouncements();
-    displayAnnouncements();
+    try {
+      const id = Date.now().toString();
+      
+      // Envoyer à Google Sheets via App Script
+      const GOOGLE_WEBAPP_URL = (typeof CONFIG !== "undefined" && CONFIG.googleAppsScript?.webAppUrl)
+        ? CONFIG.googleAppsScript.webAppUrl
+        : "";
+      
+      if (GOOGLE_WEBAPP_URL) {
+        await fetch(GOOGLE_WEBAPP_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "announcement",
+            id,
+            text,
+            type
+          }),
+          mode: "no-cors"
+        });
+      }
+      
+      // Ajouter localement aussi
+      announcements.push({
+        id,
+        text,
+        type,
+        createdAt: new Date().toISOString()
+      });
+      localStorage.setItem("magician_announcements", JSON.stringify(announcements));
+      document.getElementById("announcement-text").value = "";
+      renderAnnouncements();
+      displayAnnouncements();
+    } catch (error) {
+      console.error("Erreur lors de l'ajout de l'annonce:", error);
+    }
   }
 }
 
