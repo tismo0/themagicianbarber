@@ -455,7 +455,8 @@ async function handleBookingSubmit(e) {
 
   if (GOOGLE_WEBAPP_URL) {
     try {
-      await fetch(GOOGLE_WEBAPP_URL, {
+      // Envoi en arrière-plan, on ne bloque pas l'interface sur la réponse
+      fetch(GOOGLE_WEBAPP_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -463,6 +464,8 @@ async function handleBookingSubmit(e) {
           ...formData
         }),
         mode: "no-cors"
+      }).catch((error) => {
+        console.error("Erreur lors de l'envoi de la réservation vers Google Sheets:", error);
       });
     } catch (error) {
       console.error("Erreur lors de l'envoi de la réservation vers Google Sheets:", error);
@@ -486,7 +489,7 @@ function showMessage(message, type) {
   formMessage.className = `form-message ${type}`;
   setTimeout(() => {
     formMessage.className = "form-message";
-  }, 5000);
+  }, 2500);
 }
 
 function openAdminModal() {
