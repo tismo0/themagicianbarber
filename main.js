@@ -1,7 +1,6 @@
 const ADMIN_PASSWORD = "@admin48k";
 const STORAGE_KEY = "magician_bookings";
-const ADMIN_KEY = "magician_admin";
-const ADMIN_IP_KEY = "magician_admin_ip";
+const ADMIN_SESSION_KEY = "magician_admin";
 const ADMIN_TIMEOUT = 24 * 60 * 60 * 1000; // 24 heures
 
 let bookings = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
@@ -11,7 +10,6 @@ let announcements = JSON.parse(localStorage.getItem("magician_announcements")) |
 let isAdminLoggedIn = false;
 let selectedDate = null;
 let currentMonth = new Date();
-let userIP = null;
 
 const services = {
   "coupe-tondeuse": { name: "Coupe tondeuse", price: 13, duration: 20 },
@@ -35,8 +33,7 @@ const businessHours = {
   6: { start: "09:00", end: "18:00" }
 };
 
-document.addEventListener("DOMContentLoaded", async () => {
-  await getUserIP();
+document.addEventListener("DOMContentLoaded", () => {
   renderCalendar();
   updateCalendarLegend();
   setupEventListeners();
@@ -269,10 +266,9 @@ function handleAdminLogin() {
   if (password === ADMIN_PASSWORD) {
     isAdminLoggedIn = true;
     const adminData = {
-      ip: userIP,
       timestamp: Date.now()
     };
-    localStorage.setItem(ADMIN_IP_KEY, JSON.stringify(adminData));
+    localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(adminData));
     closeAdminModal();
     openAdminPanel();
   } else {
@@ -283,34 +279,24 @@ function handleAdminLogin() {
 
 function handleAdminLogout() {
   isAdminLoggedIn = false;
-  localStorage.removeItem(ADMIN_KEY);
+  localStorage.removeItem(ADMIN_SESSION_KEY);
   closeAdminPanel();
 }
 
 function checkAdminStatus() {
-  const adminData = JSON.parse(localStorage.getItem(ADMIN_IP_KEY));
+  const adminData = JSON.parse(localStorage.getItem(ADMIN_SESSION_KEY));
   
   if (adminData && adminData.timestamp) {
     const elapsed = Date.now() - adminData.timestamp;
     
-    if (elapsed < ADMIN_TIMEOUT && adminData.ip === userIP) {
+    if (elapsed < ADMIN_TIMEOUT) {
       isAdminLoggedIn = true;
       adminData.timestamp = Date.now();
-      localStorage.setItem(ADMIN_IP_KEY, JSON.stringify(adminData));
+      localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(adminData));
     } else {
-      localStorage.removeItem(ADMIN_IP_KEY);
+      localStorage.removeItem(ADMIN_SESSION_KEY);
       isAdminLoggedIn = false;
     }
-  }
-}
-
-async function getUserIP() {
-  try {
-    const response = await fetch('https://api.ipify.org?format=json');
-    const data = await response.json();
-    userIP = data.ip;
-  } catch (e) {
-    userIP = "unknown";
   }
 }
 
