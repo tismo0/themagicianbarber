@@ -33,13 +33,95 @@ const businessHours = {
   6: { start: "09:00", end: "18:00" }
 };
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  // Charger les réservations depuis Google Sheets (source unique)
+  await loadBookingsFromGoogleSheets();
   renderCalendar();
   updateCalendarLegend();
   setupEventListeners();
   checkAdminStatus();
   displayAnnouncements();
+  
+  // Recharger les réservations toutes les 30 secondes pour synchroniser entre appareils
+  setInterval(async () => {
+    await loadBookingsFromGoogleSheets();
+    renderCalendar();
+    updateCalendarLegend();
+  }, 30000);
 });
+
+// Charger les réservations depuis Google Sheets (source unique de vérité)
+async function loadBookingsFromGoogleSheets() {
+  try {
+    const spreadsheetId = (typeof CONFIG !== "undefined" && CONFIG.googleAppsScript?.spreadsheetId)
+      ? CONFIG.googleAppsScript.spreadsheetId
+      : null;
+
+    if (!spreadsheetId) {
+      console.log("Pas d'ID de feuille configuré, utilisation du localStorage");
+      return;
+    }
+
+    // Charger depuis l'onglet "Réservations"
+    const csvUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&sheet=Réservations`;
+    const response = await fetch(csvUrl);
+    
+    if (!response.ok) {
+      console.warn("Impossible de charger les réservations depuis Google Sheets");
+      return;
+    }
+
+    const csv = await response.text();
+    const lines = csv.trim().split("\n");
+    
+    // Parse CSV (skip header)
+    bookings = [];
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i];
+      if (!line.trim()) continue;
+      
+      // Parse CSV en gérant les guillemets
+      const values = [];
+      let current = "";
+      let inQuotes = false;
+      
+      for (let j = 0; j < line.length; j++) {
+        const char = line[j];
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === "," && !inQuotes) {
+          values.push(current.trim().replace(/^"|"$/g, ""));
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+      values.push(current.trim().replace(/^"|"$/g, ""));
+      
+      const [date, time, prenom, nom, email, instagram, service, coiffeur, notes] = values;
+      if (date && time && email) {
+        bookings.push({
+          id: `${date}-${time}-${email}`,
+          date,
+          time,
+          prenom,
+          nom,
+          email,
+          instagram,
+          service,
+          coiffeur,
+          notes
+        });
+      }
+    }
+
+    // Sauvegarder en cache local
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
+    console.log(`✅ ${bookings.length} réservations chargées depuis Google Sheets`);
+  } catch (error) {
+    console.error("Erreur lors du chargement des réservations:", error);
+  }
+}
 
 function renderCalendar() {
   const year = currentMonth.getFullYear();
