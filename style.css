@@ -7,26 +7,33 @@
 :root {
   --primary: #d4af37;
   --primary-dark: #b8941f;
-  --dark: #111111;
-  --dark-light: #242424;
-  --light: #f5f1e9;
+  --dark: #0a0a0a;
+  --dark-light: #1a1a1a;
+  --light-bg: #f5f1e8;
   --white: #ffffff;
-  --gray: #e2ddd2;
-  --gray-dark: #b2aa9b;
-  --text: #2c2a28;
-  --text-light: #7c7467;
-  --error: #f44336;
-  --warning: #ff9800;
-  --success: #4caf50;
-  --radius: 10px;
-  --shadow: 0 14px 40px rgba(0, 0, 0, 0.12);
-  --shadow-lg: 0 24px 70px rgba(0, 0, 0, 0.35);
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --gray-light: #e8e3d8;
+  --gray-mid: #d4ccc0;
+  --gray-dark: #9d9589;
+  --text-dark: #1a1a1a;
+  --text-light: #6b6559;
+  --error: #e74c3c;
+  --success: #27ae60;
+  --warning: #f39c12;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.18);
+  --shadow-xl: 0 40px 100px rgba(0, 0, 0, 0.25);
+  --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: all 0.2s ease-out;
 }
 
 html { scroll-behavior: smooth; }
-body { font-family: "Poppins", sans-serif; background: #f3eee5; color: var(--text); line-height: 1.6; overflow-x: hidden; }
-.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+body { font-family: "Poppins", sans-serif; background: var(--light-bg); color: var(--text-dark); line-height: 1.6; overflow-x: hidden; }
+.container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
 
 @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
